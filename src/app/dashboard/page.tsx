@@ -10,15 +10,31 @@ function DashboardPageSkeleton() {
     return (
     <div className="flex flex-col bg-background min-h-screen p-4 md:p-6 lg:p-8">
       {/* Header */}
-      <div className="mb-6">
-        <Skeleton className="h-8 w-1/3 mb-2" />
-        <Skeleton className="h-4 w-1/2" />
+      <div className="mb-6 flex items-center gap-3">
+        <Skeleton className="w-8 h-8 rounded-full" />
+        <div>
+          <Skeleton className="h-8 w-48 mb-2" />
+          <Skeleton className="h-4 w-64" />
+        </div>
       </div>
 
       {/* Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left Column */}
         <div className="lg:col-span-2 space-y-6">
+            {/* Quick Actions */}
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <Card>
+                  <CardHeader><Skeleton className="h-6 w-1/2" /></CardHeader>
+                  <CardContent><Skeleton className="h-10 w-full" /></CardContent>
+                  <CardFooter><Skeleton className="h-10 w-full" /></CardFooter>
+               </Card>
+               <Card>
+                  <CardHeader><Skeleton className="h-6 w-1/2" /></CardHeader>
+                  <CardContent><Skeleton className="h-10 w-full" /></CardContent>
+                  <CardFooter><Skeleton className="h-10 w-full" /></CardFooter>
+               </Card>
+             </div>
           {/* Card 1 */}
           <Card>
             <CardHeader>
