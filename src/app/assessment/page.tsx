@@ -31,11 +31,18 @@ const options = [
 
 export default function AssessmentPage() {
   const router = useRouter();
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [score, setScore] = useState<number | null>(null);
 
   const handleValueChange = (questionId: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
+  };
+
+  const handleNext = () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setCurrentQuestionIndex(currentQuestionIndex + 1);
+    }
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -57,6 +64,7 @@ export default function AssessmentPage() {
   };
 
   const progress = (Object.keys(answers).length / questions.length) * 100;
+  const currentQuestion = questions[currentQuestionIndex];
 
   if (score !== null) {
     const { level, advice } = getDepressionSeverity(score);
@@ -82,7 +90,7 @@ export default function AssessmentPage() {
               <Button onClick={() => router.push('/dashboard')} className="w-full">
                 Go to Dashboard
               </Button>
-              <Button onClick={() => { setScore(null); setAnswers({}); }} variant="outline" className="w-full">
+              <Button onClick={() => { setScore(null); setAnswers({}); setCurrentQuestionIndex(0); }} variant="outline" className="w-full">
                 Retake Assessment
               </Button>
             </CardFooter>
@@ -118,23 +126,28 @@ export default function AssessmentPage() {
                         <Progress value={progress} className="w-full" />
                         <p className="text-right text-sm text-muted-foreground mt-1">{Math.round(progress)}% complete</p>
                     </div>
-                    <form onSubmit={handleSubmit} className="space-y-8">
-                    {questions.map((q, index) => (
-                        <div key={q.id} className="space-y-4">
-                        <Label className="text-base">{index + 1}. {q.text}</Label>
-                        <RadioGroup onValueChange={(value) => handleValueChange(q.id, value)} value={answers[q.id]} className="space-y-2">
+                    <form onSubmit={(e) => e.preventDefault()} className="space-y-8">
+                        <div key={currentQuestion.id} className="space-y-4">
+                        <Label className="text-base">{currentQuestionIndex + 1}. {currentQuestion.text}</Label>
+                        <RadioGroup onValueChange={(value) => handleValueChange(currentQuestion.id, value)} value={answers[currentQuestion.id]} className="space-y-2">
                             {options.map((option) => (
                             <div key={option.value} className="flex items-center space-x-2">
-                                <RadioGroupItem value={option.value} id={`${q.id}-${option.value}`} />
-                                <Label htmlFor={`${q.id}-${option.value}`}>{option.label}</Label>
+                                <RadioGroupItem value={option.value} id={`${currentQuestion.id}-${option.value}`} />
+                                <Label htmlFor={`${currentQuestion.id}-${option.value}`}>{option.label}</Label>
                             </div>
                             ))}
                         </RadioGroup>
                         </div>
-                    ))}
-                    <Button type="submit" className="w-full" size="lg">
-                        See My Results
-                    </Button>
+                    
+                        {currentQuestionIndex < questions.length - 1 ? (
+                            <Button onClick={handleNext} className="w-full" size="lg" disabled={!answers[currentQuestion.id]}>
+                                Next
+                            </Button>
+                        ) : (
+                            <Button onClick={handleSubmit} className="w-full" size="lg" disabled={!answers[currentQuestion.id]}>
+                                See My Results
+                            </Button>
+                        )}
                     </form>
                 </CardContent>
                 </Card>
