@@ -23,16 +23,35 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
-import { useSearchParams } from "next/navigation";
 import { useState, useEffect } from "react";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
 const appointmentSchema = z.object({
-  name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email." }).optional(),
+  bookingType: z.enum(["individual", "anonymous"]),
+  name: z.string().optional(),
+  email: z.string().optional(),
   counsellor: z.string({ required_error: "Please select a counsellor." }),
   date: z.date({ required_error: "Please select a date." }),
   reason: z.string().max(200, { message: "Reason must be 200 characters or less." }).optional(),
+}).refine(data => {
+    if (data.bookingType === 'individual') {
+        return z.string().min(2, { message: "Name must be at least 2 characters." }).safeParse(data.name).success;
+    }
+    return true;
+}, {
+    message: "Name must be at least 2 characters.",
+    path: ["name"],
+}).refine(data => {
+    if (data.bookingType === 'individual') {
+        return z.string().email({ message: "Please enter a valid email." }).safeParse(data.email).success;
+    }
+    return true;
+},
+{
+    message: "Please enter a valid email.",
+    path: ["email"],
 });
+
 
 type AppointmentFormValues = z.infer<typeof appointmentSchema>;
 
@@ -43,45 +62,40 @@ const counsellors = [
 ];
 
 export default function BookAppointmentPage() {
-  const searchParams = useSearchParams();
-  const [isAnonymous, setIsAnonymous] = useState(false);
-
-  useEffect(() => {
-    setIsAnonymous(searchParams.get('anonymous') === 'true');
-  }, [searchParams]);
-
   const form = useForm<AppointmentFormValues>({
-    resolver: zodResolver(appointmentSchema.extend({
-      email: isAnonymous 
-        ? z.string().optional() 
-        : z.string().email({ message: "Please enter a valid email." }),
-    })),
+    resolver: zodResolver(appointmentSchema),
     defaultValues: {
-      name: isAnonymous ? "Anonymous" : "",
+      bookingType: "individual",
+      name: "",
       email: "",
     },
   });
 
-   useEffect(() => {
-    if (!isAnonymous) {
-      form.reset({
-        name: "Signed-in User", 
-        email: "student@college.edu"
-      });
+  const bookingType = form.watch("bookingType");
+
+  useEffect(() => {
+    if (bookingType === 'anonymous') {
+      form.setValue('name', 'Anonymous');
+      form.setValue('email', '');
+      form.clearErrors('name');
+      form.clearErrors('email');
     } else {
-       form.reset({
-        name: "",
-        email: ""
-      });
+      form.setValue('name', '');
     }
-  }, [isAnonymous, form]);
+  }, [bookingType, form]);
+
 
   function onSubmit(data: AppointmentFormValues) {
+    const finalData = { ...data };
+    if (finalData.bookingType === 'anonymous') {
+        delete finalData.email;
+    }
+
     toast({
       title: "Appointment Booked!",
       description: (
         <pre className="mt-2 w-[340px] rounded-md bg-slate-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
+          <code className="text-white">{JSON.stringify(finalData, null, 2)}</code>
         </pre>
       ),
     });
@@ -97,27 +111,70 @@ export default function BookAppointmentPage() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-             {!isAnonymous ? (
-                // For signed-in users, we might pre-fill and hide these fields
+               <FormField
+                  control={form.control}
+                  name="bookingType"
+                  render={({ field }) => (
+                    <FormItem className="space-y-3">
+                      <FormLabel>How would you like to attend?</FormLabel>
+                      <FormControl>
+                        <RadioGroup
+                          onValueChange={field.onChange}
+                          defaultValue={field.value}
+                          className="flex flex-col space-y-1"
+                        >
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="individual" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              As an Individual (Your name will be shared)
+                            </FormLabel>
+                          </FormItem>
+                          <FormItem className="flex items-center space-x-3 space-y-0">
+                            <FormControl>
+                              <RadioGroupItem value="anonymous" />
+                            </FormControl>
+                            <FormLabel className="font-normal">
+                              Anonymously (Your name will not be shared)
+                            </FormLabel>
+                          </FormItem>
+                        </RadioGroup>
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+              {bookingType === 'individual' && (
                 <>
-                  <input type="hidden" {...form.register("name")} />
-                  <input type="hidden" {...form.register("email")} />
+                  <FormField
+                      control={form.control}
+                      name="name"
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Full Name</FormLabel>
+                          <FormControl>
+                            <Input placeholder="Your Name" {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                     <FormField
+                        control={form.control}
+                        name="email"
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Email</FormLabel>
+                            <FormControl>
+                              <Input placeholder="Your Email" {...field} />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
                 </>
-              ) : (
-                // For anonymous users, we ask for their name
-                 <FormField
-                    control={form.control}
-                    name="name"
-                    render={({ field }) => (
-                      <FormItem>
-                        <FormLabel>Full Name</FormLabel>
-                        <FormControl>
-                          <Input placeholder="Your Name" {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
               )}
               
               <FormField
