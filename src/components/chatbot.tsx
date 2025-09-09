@@ -60,7 +60,7 @@ export default function Chatbot() {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-full max-h-[calc(100vh-100px)] p-4">
+    <div className="flex flex-col h-full">
         <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
           <div className="space-y-4">
             {messages.map((message, index) => (
