@@ -10,7 +10,7 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
-import { HeartPulse, MessageSquare, CalendarPlus, LogOut, Settings, UserCircle, BotMessageSquare } from 'lucide-react';
+import { HeartPulse, MessageSquare, CalendarPlus, LogOut, Settings, UserCircle, BotMessageSquare, BookOpen } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -26,6 +26,7 @@ export default function DashboardLayout({
     { href: '/dashboard', label: 'Chatbot', icon: BotMessageSquare },
     { href: '/book-appointment', label: 'Book Appointment', icon: CalendarPlus },
     { href: '/community', label: 'Community', icon: MessageSquare },
+    { href: '/cultural-content', label: 'Cultural Content', icon: BookOpen },
   ];
 
   return (
