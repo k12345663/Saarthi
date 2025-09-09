@@ -149,7 +149,7 @@ export default function Home() {
                 <HeartPulse className="h-5 w-5 text-primary" />
                 <span className="font-semibold">Saarthi</span>
             </div>
-            <p className="text-sm text-muted-foreground mt-4 md:mt-0">© 2024 Saarthi. All rights reserved.</p>
+            <p className="text-sm text-muted-foreground mt-4 md:mt-0">© SIH Team Saarthi. All rights reserved.</p>
             <nav className="flex gap-4 mt-4 md:mt-0">
                 <Link href="#" className="text-sm hover:underline" prefetch={false}>Privacy Policy</Link>
                 <Link href="#" className="text-sm hover:underline" prefetch={false}>Terms of Service</Link>

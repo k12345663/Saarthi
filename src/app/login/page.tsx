@@ -60,6 +60,12 @@ export default function LoginPage() {
                 <Link href="/assessment">Continue Anonymously</Link>
               </Button>
             </form>
+            <div className="mt-4 text-center text-sm">
+              Don&apos;t have an account?{' '}
+              <Link href="#" className="underline" prefetch={false}>
+                Sign up
+              </Link>
+            </div>
           </CardContent>
         </Card>
       </div>
