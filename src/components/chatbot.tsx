@@ -27,12 +27,15 @@ export default function Chatbot() {
     if (input.trim() === '') return;
 
     const userMessage: Message = { text: input, sender: 'user' };
-    setMessages((prev) => [...prev, userMessage]);
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
     setInput('');
     setIsLoading(true);
 
     try {
-      const result = await chatbotSupport({ message: input });
+      // Pass the last 10 messages for context
+      const history = newMessages.slice(-10).map(m => `${m.sender}: ${m.text}`).join('\n');
+      const result = await chatbotSupport({ message: history });
       const botMessage: Message = { text: result.response, sender: 'bot' };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
