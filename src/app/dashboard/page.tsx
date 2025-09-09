@@ -1,41 +1,13 @@
 'use client';
 
-import {
-  BarChart,
-  LineChart,
-  ResponsiveContainer,
-  XAxis,
-  YAxis,
-  Bar,
-  Line,
-  Tooltip,
-  Legend,
-} from 'recharts';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import {
-  ArrowRight,
-  BookOpen,
-  Calendar,
-  MessageSquare,
-  Newspaper,
-  TrendingUp,
-  Heart,
-  Bot,
-  CalendarCheck2,
-} from 'lucide-react';
+import { Bot, Calendar, CalendarCheck2, Heart } from 'lucide-react';
 import Chatbot from '@/components/chatbot';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
-
-const latestScore = {
-  score: 8,
-  level: 'Mild',
-  advice:
-    "You're showing signs of improvement. Keep focusing on self-care and using the coping strategies that work for you.",
-};
 
 const mentalHealthScore = 72;
 
@@ -107,7 +79,7 @@ export default function DashboardPage() {
               </CardFooter>
             </Card>
 
-            {/* Talk to Saarthi Card */}
+             {/* Talk to Saarthi Card - Removed button */}
             <Card>
               <CardHeader>
                   <div className='flex items-center gap-2'>
@@ -115,20 +87,15 @@ export default function DashboardPage() {
                       <CardTitle>Talk to Saarthi</CardTitle>
                   </div>
                 <CardDescription>
-                  Get immediate support from your privacy-first mental health assistant
+                  Get immediate support from your privacy-first mental health assistant. Access the chat via the sidebar.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <Button className="w-full" asChild>
-                  <Link href="/chatbot">Start Chat</Link>
-                </Button>
-              </CardContent>
             </Card>
           </div>
 
           {/* Right column */}
           <div className="space-y-6">
-            {/* Book Appointment Card */}
+            {/* Book Appointment Card - Removed button */}
             <Card>
               <CardHeader>
                 <div className='flex items-center gap-2'>
@@ -136,14 +103,9 @@ export default function DashboardPage() {
                   <CardTitle>Book Appointment</CardTitle>
                 </div>
                 <CardDescription>
-                  Schedule a session with a mental health professional
+                  Schedule a session with a mental health professional via the sidebar.
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <Button className="w-full" asChild>
-                  <Link href="/book-appointment">Book Now</Link>
-                </Button>
-              </CardContent>
             </Card>
 
             {/* Upcoming Appointments Card */}
