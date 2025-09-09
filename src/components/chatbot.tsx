@@ -1,19 +1,40 @@
 'use client';
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect, forwardRef } from 'react';
 import { chatbotSupport } from '@/ai/flows/supportive-chatbot';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send, User, Bot } from 'lucide-react';
-import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
-import { ScrollArea } from './ui/scroll-area';
+import { ScrollArea, ScrollAreaPrimitive } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
 interface Message {
   text: string;
   sender: 'user' | 'bot';
 }
+
+// Custom ScrollArea to get a ref to the viewport
+const ChatScrollArea = forwardRef<
+  React.ElementRef<typeof ScrollAreaPrimitive.Root>,
+  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
+>(({ className, children, ...props }, ref) => (
+  <ScrollAreaPrimitive.Root
+    ref={ref}
+    className={cn("relative overflow-hidden", className)}
+    {...props}
+  >
+    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
+      {children}
+    </ScrollAreaPrimitive.Viewport>
+    <ScrollAreaPrimitive.ScrollAreaScrollbar>
+        <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
+    </ScrollAreaPrimitive.ScrollAreaScrollbar>
+    <ScrollAreaPrimitive.Corner />
+  </ScrollAreaPrimitive.Root>
+));
+ChatScrollArea.displayName = 'ChatScrollArea';
+
 
 export default function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
@@ -33,7 +54,6 @@ export default function Chatbot() {
     setIsLoading(true);
 
     try {
-      // Pass the last 10 messages for context
       const history = newMessages.slice(-10).map(m => `${m.sender}: ${m.text}`).join('\n');
       const result = await chatbotSupport({ message: history });
       const botMessage: Message = { text: result.response, sender: 'bot' };
@@ -52,7 +72,7 @@ export default function Chatbot() {
 
   useEffect(() => {
     if (scrollAreaRef.current) {
-        const viewport = scrollAreaRef.current.querySelector('div');
+        const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
         if (viewport) {
             viewport.scrollTop = viewport.scrollHeight;
         }
@@ -61,7 +81,7 @@ export default function Chatbot() {
 
   return (
     <div className="flex flex-col h-full">
-        <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+        <ChatScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
           <div className="space-y-4">
             {messages.map((message, index) => (
               <div
@@ -86,7 +106,7 @@ export default function Chatbot() {
                       : 'bg-muted'
                   )}
                 >
-                  <p>{message.text}</p>
+                  <p className="whitespace-pre-wrap">{message.text}</p>
                 </div>
                 {message.sender === 'user' && (
                   <Avatar className="h-8 w-8">
@@ -114,8 +134,8 @@ export default function Chatbot() {
               </div>
             )}
           </div>
-        </ScrollArea>
-        <div className="flex items-center gap-2 p-4 border-t">
+        </ChatScrollArea>
+        <div className="flex items-center gap-2 p-4 border-t bg-background">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
