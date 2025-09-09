@@ -29,7 +29,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 const appointmentSchema = z.object({
   bookingType: z.enum(["individual", "anonymous"]),
   name: z.string().optional(),
-  email: z.string().optional(),
+  email: z.string().email({ message: "Please enter a valid email." }).optional().or(z.literal('')),
   counsellor: z.string({ required_error: "Please select a counsellor." }),
   date: z.date({ required_error: "Please select a date." }),
   reason: z.string().max(200, { message: "Reason must be 200 characters or less." }).optional(),
@@ -88,6 +88,7 @@ export default function BookAppointmentPage() {
   function onSubmit(data: AppointmentFormValues) {
     const finalData = { ...data };
     if (finalData.bookingType === 'anonymous') {
+        finalData.name = 'Anonymous';
         delete finalData.email;
     }
 
@@ -128,7 +129,7 @@ export default function BookAppointmentPage() {
                               <RadioGroupItem value="individual" />
                             </FormControl>
                             <FormLabel className="font-normal">
-                              As an Individual (Your name will be shared)
+                              As an Individual (Your details will be used for reminders)
                             </FormLabel>
                           </FormItem>
                           <FormItem className="flex items-center space-x-3 space-y-0">
@@ -136,7 +137,7 @@ export default function BookAppointmentPage() {
                               <RadioGroupItem value="anonymous" />
                             </FormControl>
                             <FormLabel className="font-normal">
-                              Anonymously (Your name will not be shared)
+                              Anonymously (Your details will not be shared)
                             </FormLabel>
                           </FormItem>
                         </RadioGroup>
@@ -146,36 +147,40 @@ export default function BookAppointmentPage() {
                   )}
                 />
 
-              {bookingType === 'individual' && (
-                <>
-                  <FormField
-                      control={form.control}
-                      name="name"
-                      render={({ field }) => (
+                <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                    <FormItem>
+                        <FormLabel>Full Name</FormLabel>
+                        <FormControl>
+                        <Input 
+                            placeholder="Your Name" 
+                            {...field} 
+                            disabled={bookingType === 'anonymous'}
+                        />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
+                    )}
+                />
+                <FormField
+                    control={form.control}
+                    name="email"
+                    render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Full Name</FormLabel>
-                          <FormControl>
-                            <Input placeholder="Your Name" {...field} />
-                          </FormControl>
-                          <FormMessage />
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                            <Input 
+                                placeholder="Your Email" 
+                                {...field} 
+                                disabled={bookingType === 'anonymous'}
+                            />
+                        </FormControl>
+                        <FormMessage />
                         </FormItem>
-                      )}
-                    />
-                     <FormField
-                        control={form.control}
-                        name="email"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Email</FormLabel>
-                            <FormControl>
-                              <Input placeholder="Your Email" {...field} />
-                            </FormControl>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
-                </>
-              )}
+                    )}
+                />
               
               <FormField
                 control={form.control}
@@ -230,7 +235,7 @@ export default function BookAppointmentPage() {
                           selected={field.value}
                           onSelect={field.onChange}
                           disabled={(date) =>
-                            date < new Date() || date < new Date("1900-01-01")
+                            date < new Date(new Date().setDate(new Date().getDate() - 1))
                           }
                           initialFocus
                         />
