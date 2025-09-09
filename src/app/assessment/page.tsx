@@ -88,7 +88,7 @@ export default function AssessmentPage() {
             </CardContent>
             <CardFooter className="flex-col gap-4">
               <Button onClick={() => router.push('/dashboard')} className="w-full">
-                Go to Dashboard
+                Continue to Dashboard
               </Button>
               <Button onClick={() => { setScore(null); setAnswers({}); setCurrentQuestionIndex(0); }} variant="outline" className="w-full">
                 Retake Assessment
