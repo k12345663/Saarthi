@@ -22,6 +22,7 @@ import {
   TrendingUp,
   Heart,
   Bot,
+  CalendarCheck2,
 } from 'lucide-react';
 import Chatbot from '@/components/chatbot';
 import Link from 'next/link';
@@ -71,76 +72,109 @@ export default function DashboardPage() {
         </p>
       </header>
       <main className="flex-1 p-4 md:p-6 lg:p-8">
-        <div className="max-w-3xl mx-auto space-y-6">
-          {/* Mental Health Score Card */}
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle>Mental Health Score</CardTitle>
-              <Button variant="ghost" size="icon">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Left column */}
+          <div className="lg:col-span-2 space-y-6">
+             {/* Mental Health Score Card */}
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between">
+                <CardTitle>Mental Health Score</CardTitle>
                 <Heart className="w-5 h-5 text-muted-foreground" />
-              </Button>
-            </CardHeader>
-            <CardContent>
-              <div className="flex items-baseline gap-2">
-                <span className="text-4xl font-bold">{mentalHealthScore}</span>
-                <span className="text-2xl text-muted-foreground">/100</span>
-              </div>
-              <p className="text-sm text-muted-foreground mt-1">Good mental state</p>
-              <Progress value={mentalHealthScore} className="mt-4 h-2" />
-            </CardContent>
-          </Card>
-
-          {/* Last Assessment Card */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Last Assessment</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <p className="text-xl font-semibold">PHQ-9</p>
-                <p className="text-muted-foreground">Mild depression (5/27)</p>
-            </CardContent>
-            <CardFooter>
-                 <Button variant="outline" className="w-full" asChild>
-                    <Link href="/assessment?signedin=true">Take New Test</Link>
-                </Button>
-            </CardFooter>
-          </Card>
-
-          {/* Talk to Saarthi Card */}
-          <Card>
-            <CardHeader>
-                <div className='flex items-center gap-2'>
-                    <Bot className="w-6 h-6" />
-                    <CardTitle>Talk to Saarthi</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="flex items-baseline gap-2">
+                  <span className="text-4xl font-bold">{mentalHealthScore}</span>
+                  <span className="text-2xl text-muted-foreground">/100</span>
                 </div>
-              <CardDescription>
-                Get immediate support from your privacy-first mental health assistant
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full" asChild>
-                <Link href="/chatbot">Start Chat</Link>
-              </Button>
-            </CardContent>
-          </Card>
+                <p className="text-sm text-muted-foreground mt-1">Good mental state</p>
+                <Progress value={mentalHealthScore} className="mt-4 h-2" />
+              </CardContent>
+            </Card>
 
-          {/* Book Appointment Card */}
-          <Card>
-            <CardHeader>
-              <div className='flex items-center gap-2'>
-                <Calendar className="w-6 h-6" />
-                <CardTitle>Book Appointment</CardTitle>
-              </div>
-              <CardDescription>
-                Schedule a session with a mental health professional
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button className="w-full" asChild>
-                <Link href="/book-appointment">Book Now</Link>
-              </Button>
-            </CardContent>
-          </Card>
+            {/* Last Assessment Card */}
+            <Card>
+              <CardHeader>
+                <CardTitle>Last Assessment</CardTitle>
+              </CardHeader>
+              <CardContent>
+                  <p className="text-xl font-semibold">PHQ-9</p>
+                  <p className="text-muted-foreground">Mild depression (5/27)</p>
+              </CardContent>
+              <CardFooter>
+                   <Button variant="outline" className="w-full" asChild>
+                      <Link href="/assessment?signedin=true">Take New Test</Link>
+                  </Button>
+              </CardFooter>
+            </Card>
+
+            {/* Talk to Saarthi Card */}
+            <Card>
+              <CardHeader>
+                  <div className='flex items-center gap-2'>
+                      <Bot className="w-6 h-6" />
+                      <CardTitle>Talk to Saarthi</CardTitle>
+                  </div>
+                <CardDescription>
+                  Get immediate support from your privacy-first mental health assistant
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full" asChild>
+                  <Link href="/chatbot">Start Chat</Link>
+                </Button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Right column */}
+          <div className="space-y-6">
+            {/* Book Appointment Card */}
+            <Card>
+              <CardHeader>
+                <div className='flex items-center gap-2'>
+                  <Calendar className="w-6 h-6" />
+                  <CardTitle>Book Appointment</CardTitle>
+                </div>
+                <CardDescription>
+                  Schedule a session with a mental health professional
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <Button className="w-full" asChild>
+                  <Link href="/book-appointment">Book Now</Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Upcoming Appointments Card */}
+            <Card>
+              <CardHeader>
+                <div className='flex items-center gap-2'>
+                  <CalendarCheck2 className="w-6 h-6" />
+                  <CardTitle>Upcoming Appointments</CardTitle>
+                </div>
+                <CardDescription>
+                  Your scheduled sessions with our counsellors.
+                </CardDescription>
+              </CardHeader>
+              <CardContent className='space-y-4'>
+                  <div className='flex items-center gap-4 p-3 rounded-lg bg-accent/50'>
+                    <Calendar className='w-5 h-5 text-primary'/>
+                    <div>
+                      <p className='font-semibold'>Dr. Anjali Sharma</p>
+                      <p className='text-sm text-muted-foreground'>Tomorrow at 2:00 PM</p>
+                    </div>
+                  </div>
+                   <div className='flex items-center gap-4 p-3 rounded-lg bg-accent/50'>
+                    <Calendar className='w-5 h-5 text-primary'/>
+                    <div>
+                      <p className='font-semibold'>Mr. Rohan Gupta</p>
+                      <p className='text-sm text-muted-foreground'>Next week, Tuesday at 11:00 AM</p>
+                    </div>
+                  </div>
+              </CardContent>
+            </Card>
+          </div>
         </div>
       </main>
     </div>
