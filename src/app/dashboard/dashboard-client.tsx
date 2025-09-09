@@ -3,7 +3,7 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Calendar, CalendarCheck2, Heart, Bell, History } from 'lucide-react';
+import { Calendar, CalendarCheck2, Heart, Bell, History, Bot, CalendarPlus } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -39,16 +39,58 @@ export default function DashboardClient() {
 
   return (
     <div className="flex flex-col bg-background min-h-screen">
-      <header className="p-4 md:p-6 lg:p-8 bg-card border-b">
-        <h1 className="text-2xl font-bold">Saarthi Dashboard</h1>
-        <p className="text-muted-foreground">
-          Your privacy-first mental health support system
-        </p>
+       <header className="p-4 md:p-6 lg:p-8 bg-card border-b">
+        <div className="flex items-center gap-3">
+          <Heart className="w-8 h-8 text-primary" />
+          <div>
+            <h1 className="text-2xl font-bold">Saarthi Dashboard</h1>
+            <p className="text-muted-foreground">
+              Your privacy-first mental health support system
+            </p>
+          </div>
+        </div>
       </header>
       <main className="flex-1 p-4 md:p-6 lg:p-8">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Left column */}
           <div className="lg:col-span-2 space-y-6">
+             {/* Quick Actions */}
+             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+               <Card className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                    <div className='flex items-center gap-2'>
+                        <Bot className='w-6 h-6 text-primary' />
+                        <CardTitle>Chat with Saarthi</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">Talk to our friendly AI for support, or to explore coping strategies.</p>
+                  </CardContent>
+                  <CardFooter>
+                    <Button asChild className='w-full'>
+                      <Link href="/chatbot">Start Chat</Link>
+                    </Button>
+                  </CardFooter>
+               </Card>
+               <Card className="hover:shadow-lg transition-shadow">
+                  <CardHeader>
+                     <div className='flex items-center gap-2'>
+                        <CalendarPlus className='w-6 h-6 text-primary' />
+                        <CardTitle>Book a Session</CardTitle>
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <p className="text-muted-foreground">Schedule a confidential appointment with a professional counsellor.</p>
+                  </CardContent>
+                  <CardFooter>
+                     <Button asChild className='w-full'>
+                      <Link href="/book-appointment">Book Now</Link>
+                    </Button>
+                  </CardFooter>
+               </Card>
+             </div>
+
+
              {/* Mental Health Score Card */}
             <Card>
               <CardHeader className="flex flex-row items-center justify-between">
@@ -171,3 +213,5 @@ export default function DashboardClient() {
     </div>
   );
 }
+
+    
