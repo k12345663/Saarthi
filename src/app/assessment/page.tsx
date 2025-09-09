@@ -1,3 +1,4 @@
+
 'use client';
 
 import { useState, useEffect, Suspense } from 'react';
@@ -176,14 +177,6 @@ function Assessment() {
   );
 }
 
-function AssessmentPage() {
-  return (
-    <Suspense fallback={<AssessmentPageSkeleton />}>
-      <Assessment />
-    </Suspense>
-  );
-}
-
 function AssessmentPageSkeleton() {
   return (
      <div className="flex flex-col items-center min-h-screen bg-background p-4">
@@ -228,4 +221,13 @@ function AssessmentPageSkeleton() {
   )
 }
 
-export default AssessmentPage;
+// This is the component that will be rendered on the server.
+// It wraps the actual Assessment component in a Suspense boundary.
+// This tells Next.js to show the skeleton while the client-side component loads.
+export default function AssessmentPage() {
+  return (
+    <Suspense fallback={<AssessmentPageSkeleton />}>
+      <Assessment />
+    </Suspense>
+  );
+}
