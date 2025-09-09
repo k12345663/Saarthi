@@ -18,53 +18,53 @@ import { Skeleton } from '@/components/ui/skeleton';
 
 function DashboardLayoutSkeleton() {
     return (
-    <div className="flex flex-col bg-background min-h-screen p-4 md:p-6 lg:p-8">
-      {/* Header */}
-      <div className="mb-6">
-        <Skeleton className="h-8 w-1/3 mb-2" />
-        <Skeleton className="h-4 w-1/2" />
-      </div>
-
-      {/* Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Left Column */}
-        <div className="lg:col-span-2 space-y-6">
-          {/* Card 1 */}
-          <div className="p-6 rounded-lg border bg-card">
-            <Skeleton className="h-6 w-1/2 mb-4" />
-            <Skeleton className="h-10 w-1/4 mb-2" />
-            <Skeleton className="h-4 w-1/3 mb-4" />
-            <Skeleton className="h-2 w-full" />
-          </div>
-          {/* Card 2 */}
-           <div className="p-6 rounded-lg border bg-card">
-            <Skeleton className="h-6 w-1/2 mb-4" />
-            <Skeleton className="h-5 w-1/4 mb-2" />
-            <Skeleton className="h-4 w-1/3" />
-            <div className="mt-6">
+    <div className="flex bg-background min-h-screen">
+      {/* Sidebar Skeleton */}
+      <div className="hidden md:flex flex-col justify-between w-64 p-2 border-r">
+          <div>
+            <div className="p-2">
+                <Skeleton className="h-8 w-32" />
+            </div>
+            <div className='p-2 mt-2 space-y-1'>
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
+                <Skeleton className="h-10 w-full" />
                 <Skeleton className="h-10 w-full" />
             </div>
           </div>
-        </div>
-        {/* Right Column */}
-        <div className="space-y-6">
-          {/* Card 4 */}
-          <div className="p-6 rounded-lg border bg-card">
-             <Skeleton className="h-6 w-1/2 mb-4" />
-             <Skeleton className="h-4 w-3/4 mb-6" />
-             <div className="space-y-4">
-                <Skeleton className="h-16 w-full" />
-                <Skeleton className="h-16 w-full" />
-             </div>
+          <div>
+              <div className="p-2 space-y-1">
+                  <Skeleton className="h-10 w-full" />
+                  <Skeleton className="h-10 w-full" />
+              </div>
+              <div className="p-2 mt-2">
+                  <Skeleton className="h-12 w-full" />
+              </div>
           </div>
-        </div>
+      </div>
+      {/* Main Content Skeleton */}
+      <div className="flex-1 p-4 md:p-6 lg:p-8">
+          <div className="mb-6">
+            <Skeleton className="h-8 w-1/3 mb-2" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 space-y-6">
+              <div className="p-6 rounded-lg border bg-card"><Skeleton className="h-32 w-full" /></div>
+              <div className="p-6 rounded-lg border bg-card"><Skeleton className="h-32 w-full" /></div>
+            </div>
+            <div className="space-y-6">
+              <div className="p-6 rounded-lg border bg-card"><Skeleton className="h-64 w-full" /></div>
+            </div>
+          </div>
       </div>
     </div>
   );
 }
 
 
-export default function DashboardLayout({
+function DashboardLayoutContent({
   children,
 }: {
   children: React.ReactNode;
@@ -175,11 +175,21 @@ export default function DashboardLayout({
             </SidebarFooter>
         </Sidebar>
         <main className="flex-1 w-full overflow-y-auto">
-           <Suspense fallback={<DashboardLayoutSkeleton/>}>
-              {children}
-            </Suspense>
+           {children}
         </main>
       </div>
     </SidebarProvider>
+  )
+}
+
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  return (
+    <Suspense fallback={<DashboardLayoutSkeleton />}>
+      <DashboardLayoutContent>{children}</DashboardLayoutContent>
+    </Suspense>
   );
 }
