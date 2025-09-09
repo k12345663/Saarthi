@@ -1,17 +1,20 @@
 'use client';
 
 import Chatbot from '@/components/chatbot';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 
 export default function ChatbotPage() {
     return (
-        <div className="flex flex-col h-screen bg-background">
-          <header className="p-4 border-b shrink-0">
-            <h1 className="text-xl font-bold">Saarthi Chat</h1>
-            <p className="text-muted-foreground text-sm">Your friendly mental health companion.</p>
-          </header>
-          <main className="flex-1 overflow-y-auto">
-              <Chatbot />
-          </main>
+        <div className="flex items-center justify-center min-h-screen bg-muted/40 p-0 md:p-4">
+          <Card className="w-full h-screen md:h-[80vh] md:max-w-2xl md:shadow-2xl md:rounded-2xl overflow-hidden">
+             <CardHeader className="p-4 border-b">
+                <CardTitle className="text-xl font-bold">Saarthi Chat</CardTitle>
+                <CardDescription className="text-sm">Your friendly mental health companion.</CardDescription>
+            </CardHeader>
+            <CardContent className="p-0 h-[calc(100%-80px)]">
+                <Chatbot />
+            </CardContent>
+          </Card>
         </div>
     )
 }
