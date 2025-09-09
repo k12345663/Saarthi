@@ -23,10 +23,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect } from "react";
 
 const appointmentSchema = z.object({
   name: z.string().min(2, { message: "Name must be at least 2 characters." }),
-  email: z.string().email({ message: "Please enter a valid email." }),
+  email: z.string().email({ message: "Please enter a valid email." }).optional(),
   counsellor: z.string({ required_error: "Please select a counsellor." }),
   date: z.date({ required_error: "Please select a date." }),
   reason: z.string().max(200, { message: "Reason must be 200 characters or less." }).optional(),
@@ -41,13 +43,38 @@ const counsellors = [
 ];
 
 export default function BookAppointmentPage() {
+  const searchParams = useSearchParams();
+  const [isAnonymous, setIsAnonymous] = useState(false);
+
+  useEffect(() => {
+    setIsAnonymous(searchParams.get('anonymous') === 'true');
+  }, [searchParams]);
+
   const form = useForm<AppointmentFormValues>({
-    resolver: zodResolver(appointmentSchema),
+    resolver: zodResolver(appointmentSchema.extend({
+      email: isAnonymous 
+        ? z.string().optional() 
+        : z.string().email({ message: "Please enter a valid email." }),
+    })),
     defaultValues: {
-      name: "",
+      name: isAnonymous ? "Anonymous" : "",
       email: "",
     },
   });
+
+   useEffect(() => {
+    if (!isAnonymous) {
+      form.reset({
+        name: "Signed-in User", 
+        email: "student@college.edu"
+      });
+    } else {
+       form.reset({
+        name: "",
+        email: ""
+      });
+    }
+  }, [isAnonymous, form]);
 
   function onSubmit(data: AppointmentFormValues) {
     toast({
@@ -70,32 +97,29 @@ export default function BookAppointmentPage() {
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-              <FormField
-                control={form.control}
-                name="name"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Full Name</FormLabel>
-                    <FormControl>
-                      <Input placeholder="Your Name" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input placeholder="your.email@example.com" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+             {!isAnonymous ? (
+                // For signed-in users, we might pre-fill and hide these fields
+                <>
+                  <input type="hidden" {...form.register("name")} />
+                  <input type="hidden" {...form.register("email")} />
+                </>
+              ) : (
+                // For anonymous users, we ask for their name
+                 <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Full Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Your Name" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+              )}
+              
               <FormField
                 control={form.control}
                 name="counsellor"

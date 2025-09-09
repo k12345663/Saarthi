@@ -28,18 +28,20 @@ export default function DashboardLayout({
   useEffect(() => {
     setIsAnonymous(searchParams.get('anonymous') === 'true');
   }, [searchParams]);
+  
+  const navQuery = isAnonymous ? '?anonymous=true' : '';
 
   const signedInMenuItems = [
-    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { href: '/chatbot', label: 'Chatbot', icon: BotMessageSquare },
-    { href: '/book-appointment', label: 'Book Appointment', icon: CalendarPlus },
-    { href: '/community', label: 'Community', icon: MessageSquare },
-    { href: '/cultural-content', label: 'Cultural Content', icon: BookOpen },
+    { href: `/dashboard${navQuery}`, label: 'Dashboard', icon: LayoutDashboard },
+    { href: `/chatbot${navQuery}`, label: 'Chatbot', icon: BotMessageSquare },
+    { href: `/book-appointment${navQuery}`, label: 'Book Appointment', icon: CalendarPlus },
+    { href: `/community${navQuery}`, label: 'Community', icon: MessageSquare },
+    { href: `/cultural-content${navQuery}`, label: 'Cultural Content', icon: BookOpen },
   ];
   
   const anonymousMenuItems = [
-      { href: '/dashboard?anonymous=true', label: 'Chatbot', icon: BotMessageSquare },
-      { href: '/book-appointment', label: 'Book Appointment', icon: CalendarPlus },
+      { href: `/chatbot${navQuery}`, label: 'Chatbot', icon: BotMessageSquare },
+      { href: `/book-appointment${navQuery}`, label: 'Book Appointment', icon: CalendarPlus },
   ];
 
   const menuItems = isAnonymous ? anonymousMenuItems : signedInMenuItems;
@@ -93,13 +95,14 @@ export default function DashboardLayout({
                             </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
-                            <span className="font-semibold text-sm">Anonymous</span>
-                            <span className="text-xs text-muted-foreground">student@college.edu</span>
+                            <span className="font-semibold text-sm">Student</span>
+                            <span className="text-xs text-muted-foreground">barhate@lths.com</span>
                         </div>
                     </div>
                   </>
                 )}
                  {isAnonymous && (
+                    <>
                     <SidebarMenu>
                         <SidebarMenuItem>
                             <SidebarMenuButton onClick={() => router.push('/')}>
@@ -108,6 +111,17 @@ export default function DashboardLayout({
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                     </SidebarMenu>
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 m-2">
+                        <Avatar>
+                            <AvatarFallback>
+                                <UserCircle/>
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                            <span className="font-semibold text-sm">Anonymous</span>
+                        </div>
+                    </div>
+                    </>
                 )}
             </SidebarFooter>
         </Sidebar>

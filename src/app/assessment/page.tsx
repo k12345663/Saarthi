@@ -36,10 +36,12 @@ export default function AssessmentPage() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [score, setScore] = useState<number | null>(null);
+  const [isAnonymous, setIsAnonymous] = useState(true);
 
   useEffect(() => {
     const signedInParam = searchParams.get('signedin');
     setIsSignedIn(signedInParam === 'true');
+    setIsAnonymous(signedInParam !== 'true');
   }, [searchParams]);
 
   const handleValueChange = (questionId: string, value: string) => {
@@ -49,15 +51,10 @@ export default function AssessmentPage() {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
         } else {
-            handleSubmit();
+            // Wait for user to see the last selection before calculating score
+             setTimeout(() => handleSubmit(), 200);
         }
     }, 300);
-  };
-
-  const handleNext = () => {
-    if (currentQuestionIndex < questions.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-    }
   };
 
   const handleSubmit = () => {
@@ -78,7 +75,7 @@ export default function AssessmentPage() {
   };
 
   const handleContinue = () => {
-    const destination = isSignedIn ? '/dashboard' : '/dashboard?anonymous=true';
+    const destination = isSignedIn ? '/dashboard' : `/dashboard?anonymous=true`;
     router.push(destination);
   }
 
@@ -87,8 +84,7 @@ export default function AssessmentPage() {
 
   if (score !== null) {
     const { level, advice, coping } = getDepressionSeverity(score);
-    const ctaText = isSignedIn ? "Open Your Dashboard" : "Book a Confidential Call";
-    const ctaLink = isSignedIn ? "/dashboard" : "/book-appointment";
+    const ctaText = isSignedIn ? "Open Your Dashboard" : "Continue Anonymously";
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-background p-4">
@@ -119,7 +115,7 @@ export default function AssessmentPage() {
               )}
             </CardContent>
             <CardFooter className="flex-col gap-4 px-6 pb-6">
-              <Button onClick={() => router.push(ctaLink)} className="w-full">
+              <Button onClick={handleContinue} className="w-full">
                 {ctaText}
               </Button>
               <Button onClick={() => { setScore(null); setAnswers({}); setCurrentQuestionIndex(0); }} variant="outline" className="w-full">
