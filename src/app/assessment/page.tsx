@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -9,6 +9,7 @@ import { Progress } from '@/components/ui/progress';
 import { HeartPulse, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const questions = [
   { id: 'q1', text: 'Little interest or pleasure in doing things' },
@@ -29,7 +30,7 @@ const options = [
     { value: '3', label: 'Nearly every day' },
 ];
 
-export default function AssessmentPage() {
+function Assessment() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isSignedIn, setIsSignedIn] = useState(false);
@@ -174,3 +175,57 @@ export default function AssessmentPage() {
     </div>
   );
 }
+
+function AssessmentPage() {
+  return (
+    <Suspense fallback={<AssessmentPageSkeleton />}>
+      <Assessment />
+    </Suspense>
+  );
+}
+
+function AssessmentPageSkeleton() {
+  return (
+     <div className="flex flex-col items-center min-h-screen bg-background p-4">
+        <div className="w-full max-w-2xl">
+            <header className="py-4 flex items-center justify-between">
+                <Skeleton className="h-10 w-10" />
+                <div className="flex items-center justify-center">
+                    <Skeleton className="h-6 w-6 rounded-full" />
+                    <Skeleton className="h-6 w-24 ml-2" />
+                </div>
+                <div className="w-10"></div>
+            </header>
+            <main>
+                <Card className="shadow-2xl shadow-primary/10 overflow-hidden">
+                <CardHeader>
+                    <Skeleton className="h-8 w-3/4" />
+                    <Skeleton className="h-4 w-full" />
+                </CardHeader>
+                <CardContent>
+                    <div className="w-full mb-6">
+                        <Skeleton className="h-2 w-full" />
+                        <Skeleton className="h-4 w-1/4 mt-2 ml-auto" />
+                    </div>
+                    <div className="space-y-8">
+                        <div className="space-y-4">
+                        <Skeleton className="h-6 w-full" />
+                        <div className="space-y-2">
+                            {[...Array(4)].map((_, i) => (
+                                <div key={i} className="flex items-center space-x-3 p-3 border rounded-lg">
+                                    <Skeleton className="h-4 w-4 rounded-full" />
+                                    <Skeleton className="h-4 w-1/3" />
+                                </div>
+                            ))}
+                        </div>
+                        </div>
+                    </div>
+                </CardContent>
+                </Card>
+            </main>
+        </div>
+    </div>
+  )
+}
+
+export default AssessmentPage;
