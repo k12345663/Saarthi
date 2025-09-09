@@ -10,7 +10,7 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
-import { HeartPulse, MessageSquare, CalendarPlus, LogOut, Settings, UserCircle, BotMessageSquare, BookOpen } from 'lucide-react';
+import { HeartPulse, MessageSquare, CalendarPlus, LogOut, Settings, UserCircle, BotMessageSquare, BookOpen, LayoutDashboard } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -30,7 +30,8 @@ export default function DashboardLayout({
   }, [searchParams]);
 
   const signedInMenuItems = [
-    { href: '/dashboard', label: 'Chatbot', icon: BotMessageSquare },
+    { href: '/dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { href: '/chatbot', label: 'Chatbot', icon: BotMessageSquare },
     { href: '/book-appointment', label: 'Book Appointment', icon: CalendarPlus },
     { href: '/community', label: 'Community', icon: MessageSquare },
     { href: '/cultural-content', label: 'Cultural Content', icon: BookOpen },
