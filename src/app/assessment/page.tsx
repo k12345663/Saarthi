@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import { Progress } from '@/components/ui/progress';
 import { HeartPulse, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 const questions = [
   { id: 'q1', text: 'Little interest or pleasure in doing things' },
@@ -31,9 +31,17 @@ const options = [
 
 export default function AssessmentPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isSignedIn, setIsSignedIn] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [score, setScore] = useState<number | null>(null);
+
+  useEffect(() => {
+    // In a real app, this would come from an auth context
+    const signedInParam = searchParams.get('signedin');
+    setIsSignedIn(signedInParam === 'true');
+  }, [searchParams]);
 
   const handleValueChange = (questionId: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
@@ -63,6 +71,11 @@ export default function AssessmentPage() {
     return { level: "Severe", advice: "Your score is in the severe range. It is very important to seek professional help immediately. Please call a helpline or book a session now." };
   };
 
+  const handleContinue = () => {
+    const destination = isSignedIn ? '/dashboard' : '/dashboard?anonymous=true';
+    router.push(destination);
+  }
+
   const progress = (Object.keys(answers).length / questions.length) * 100;
   const currentQuestion = questions[currentQuestionIndex];
 
@@ -87,7 +100,7 @@ export default function AssessmentPage() {
               )}
             </CardContent>
             <CardFooter className="flex-col gap-4">
-              <Button onClick={() => router.push('/dashboard')} className="w-full">
+              <Button onClick={handleContinue} className="w-full">
                 Continue to Dashboard
               </Button>
               <Button onClick={() => { setScore(null); setAnswers({}); setCurrentQuestionIndex(0); }} variant="outline" className="w-full">

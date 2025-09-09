@@ -15,7 +15,7 @@ export default function LoginPage() {
     e.preventDefault();
     // Simulate a successful login
     // In a real app, you would handle auth here
-    router.push('/dashboard');
+    router.push('/assessment?signedin=true');
   };
 
   return (

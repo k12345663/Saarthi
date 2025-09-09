@@ -12,7 +12,8 @@ import {
 import Link from 'next/link';
 import { HeartPulse, MessageSquare, CalendarPlus, LogOut, Settings, UserCircle, BotMessageSquare, BookOpen } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function DashboardLayout({
   children,
@@ -21,13 +22,26 @@ export default function DashboardLayout({
 }) {
   const pathname = usePathname();
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const [isAnonymous, setIsAnonymous] = useState(false);
 
-  const menuItems = [
+  useEffect(() => {
+    setIsAnonymous(searchParams.get('anonymous') === 'true');
+  }, [searchParams]);
+
+  const signedInMenuItems = [
     { href: '/dashboard', label: 'Chatbot', icon: BotMessageSquare },
     { href: '/book-appointment', label: 'Book Appointment', icon: CalendarPlus },
     { href: '/community', label: 'Community', icon: MessageSquare },
     { href: '/cultural-content', label: 'Cultural Content', icon: BookOpen },
   ];
+  
+  const anonymousMenuItems = [
+      { href: '/dashboard?anonymous=true', label: 'Chatbot', icon: BotMessageSquare },
+      { href: '/book-appointment', label: 'Book Appointment', icon: CalendarPlus },
+  ];
+
+  const menuItems = isAnonymous ? anonymousMenuItems : signedInMenuItems;
 
   return (
     <SidebarProvider>
@@ -44,7 +58,7 @@ export default function DashboardLayout({
                     {menuItems.map((item) => (
                         <SidebarMenuItem key={item.href}>
                             <Link href={item.href} passHref>
-                                <SidebarMenuButton isActive={pathname === item.href}>
+                                <SidebarMenuButton isActive={pathname === item.href.split('?')[0]}>
                                     <item.icon />
                                     <span>{item.label}</span>
                                 </SidebarMenuButton>
@@ -54,32 +68,46 @@ export default function DashboardLayout({
                 </SidebarMenu>
             </SidebarContent>
             <SidebarFooter>
-                <SidebarMenu>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton>
-                            <Settings />
-                            <span>Settings</span>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                    <SidebarMenuItem>
-                        <SidebarMenuButton onClick={() => router.push('/')}>
-                            <LogOut />
-                            <span>Logout</span>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
-                </SidebarMenu>
-                <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 m-2">
-                    <Avatar>
-                        <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
-                        <AvatarFallback>
-                            <UserCircle/>
-                        </AvatarFallback>
-                    </Avatar>
-                    <div className="flex flex-col">
-                        <span className="font-semibold text-sm">Anonymous</span>
-                        <span className="text-xs text-muted-foreground">student@college.edu</span>
+                {!isAnonymous && (
+                  <>
+                    <SidebarMenu>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton>
+                                <Settings />
+                                <span>Settings</span>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton onClick={() => router.push('/')}>
+                                <LogOut />
+                                <span>Logout</span>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    </SidebarMenu>
+                    <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 m-2">
+                        <Avatar>
+                            <AvatarImage src="https://github.com/shadcn.png" alt="@shadcn" />
+                            <AvatarFallback>
+                                <UserCircle/>
+                            </AvatarFallback>
+                        </Avatar>
+                        <div className="flex flex-col">
+                            <span className="font-semibold text-sm">Anonymous</span>
+                            <span className="text-xs text-muted-foreground">student@college.edu</span>
+                        </div>
                     </div>
-                </div>
+                  </>
+                )}
+                 {isAnonymous && (
+                    <SidebarMenu>
+                        <SidebarMenuItem>
+                            <SidebarMenuButton onClick={() => router.push('/')}>
+                                <LogOut />
+                                <span>Exit</span>
+                            </SidebarMenuButton>
+                        </SidebarMenuItem>
+                    </SidebarMenu>
+                )}
             </SidebarFooter>
         </Sidebar>
         <main className="flex-1 w-full overflow-y-auto">
