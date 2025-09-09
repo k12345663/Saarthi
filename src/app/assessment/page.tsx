@@ -38,13 +38,20 @@ export default function AssessmentPage() {
   const [score, setScore] = useState<number | null>(null);
 
   useEffect(() => {
-    // In a real app, this would come from an auth context
     const signedInParam = searchParams.get('signedin');
     setIsSignedIn(signedInParam === 'true');
   }, [searchParams]);
 
   const handleValueChange = (questionId: string, value: string) => {
     setAnswers((prev) => ({ ...prev, [questionId]: value }));
+    // Automatically move to the next question
+    setTimeout(() => {
+        if (currentQuestionIndex < questions.length - 1) {
+            setCurrentQuestionIndex(currentQuestionIndex + 1);
+        } else {
+            handleSubmit();
+        }
+    }, 300);
   };
 
   const handleNext = () => {
@@ -53,10 +60,9 @@ export default function AssessmentPage() {
     }
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = () => {
     if (Object.keys(answers).length !== questions.length) {
-        alert("Please answer all questions.");
+        // This check is less likely to fail with auto-advance, but good to have
         return;
     }
     const totalScore = Object.values(answers).reduce((acc, val) => acc + parseInt(val, 10), 0);
@@ -64,11 +70,11 @@ export default function AssessmentPage() {
   };
   
   const getDepressionSeverity = (score: number) => {
-    if (score <= 4) return { level: "None-minimal", advice: "Your score suggests you're doing well. Keep up the healthy habits!" };
-    if (score <= 9) return { level: "Mild", advice: "You may be experiencing mild symptoms. Consider talking to a friend or trying some relaxation techniques." };
-    if (score <= 14) return { level: "Moderate", advice: "Your symptoms are moderate. It might be helpful to talk to a professional. Saarthi can help you book a session." };
-    if (score <= 19) return { level: "Moderately Severe", advice: "Your score indicates moderately severe symptoms. Please consider seeking professional help soon. You are not alone." };
-    return { level: "Severe", advice: "Your score is in the severe range. It is very important to seek professional help immediately. Please call a helpline or book a session now." };
+    if (score <= 4) return { level: "None-minimal", advice: "Your score suggests you're doing well. Keep up the healthy habits!", coping: ["Practice mindfulness for 5 minutes.", "Connect with a friend today."] };
+    if (score <= 9) return { level: "Mild", advice: "You may be experiencing mild symptoms. Consider talking to a friend or trying some relaxation techniques.", coping: ["Try a guided breathing exercise.", "Go for a 15-minute walk."] };
+    if (score <= 14) return { level: "Moderate", advice: "Your symptoms are moderate. It might be helpful to talk to a professional.", coping: ["Book a session with a counsellor.", "Journal your thoughts for 10 minutes."] };
+    if (score <= 19) return { level: "Moderately Severe", advice: "Your score indicates moderately severe symptoms. Please consider seeking professional help soon. You are not alone.", coping: ["Book a session with a counsellor now.", "Reach out to the community forum for support." ]};
+    return { level: "Severe", advice: "Your score is in the severe range. It is very important to seek professional help immediately. Please call a helpline or book a session now.", coping: ["Call a crisis helpline immediately.", "Contact your campus counsellor now."] };
   };
 
   const handleContinue = () => {
@@ -76,22 +82,35 @@ export default function AssessmentPage() {
     router.push(destination);
   }
 
-  const progress = (Object.keys(answers).length / questions.length) * 100;
+  const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
   const currentQuestion = questions[currentQuestionIndex];
 
   if (score !== null) {
-    const { level, advice } = getDepressionSeverity(score);
+    const { level, advice, coping } = getDepressionSeverity(score);
+    const ctaText = isSignedIn ? "Open Your Dashboard" : "Book a Confidential Call";
+    const ctaLink = isSignedIn ? "/dashboard" : "/book-appointment";
+
     return (
         <div className="flex items-center justify-center min-h-screen bg-background p-4">
           <Card className="w-full max-w-lg shadow-2xl shadow-primary/10">
             <CardHeader>
               <CardTitle className="text-2xl text-center">Assessment Result</CardTitle>
-              <CardDescription className="text-center">Based on your PHQ-9 responses.</CardDescription>
             </CardHeader>
             <CardContent className="text-center">
-              <p className="text-lg font-semibold">Your score is: {score}</p>
+              <p className="text-lg font-semibold">Your score is: <span className='text-primary font-bold text-2xl'>{score}</span></p>
               <p className="text-xl font-bold mt-2 text-primary">{level}</p>
               <p className="mt-4 text-muted-foreground">{advice}</p>
+
+              <div className="my-6 space-y-3 text-left">
+                  <h4 className="font-semibold text-center">Personalized Coping Tips</h4>
+                  {coping.map((tip, index) => (
+                      <div key={index} className="flex items-center gap-3 p-3 bg-accent/50 rounded-lg">
+                          <span className='text-primary'>✓</span>
+                          <p>{tip}</p>
+                      </div>
+                  ))}
+              </div>
+
                {answers.q9 !== '0' && (
                 <div className="mt-4 p-4 bg-destructive/10 border border-destructive/50 text-destructive rounded-lg">
                   <p className="font-bold">⚠️ Important:</p>
@@ -99,9 +118,9 @@ export default function AssessmentPage() {
                 </div>
               )}
             </CardContent>
-            <CardFooter className="flex-col gap-4">
-              <Button onClick={handleContinue} className="w-full">
-                Continue to Dashboard
+            <CardFooter className="flex-col gap-4 px-6 pb-6">
+              <Button onClick={() => router.push(ctaLink)} className="w-full">
+                {ctaText}
               </Button>
               <Button onClick={() => { setScore(null); setAnswers({}); setCurrentQuestionIndex(0); }} variant="outline" className="w-full">
                 Retake Assessment
@@ -116,7 +135,7 @@ export default function AssessmentPage() {
     <div className="flex flex-col items-center min-h-screen bg-background p-4">
         <div className="w-full max-w-2xl">
             <header className="py-4 flex items-center justify-between">
-                <Button variant="ghost" size="icon" onClick={() => router.back()}>
+                <Button variant="ghost" size="icon" onClick={() => currentQuestionIndex > 0 ? setCurrentQuestionIndex(currentQuestionIndex - 1) : router.back()}>
                     <ArrowLeft className="h-6 w-6" />
                 </Button>
                 <Link href="/" className="flex items-center justify-center" prefetch={false}>
@@ -127,7 +146,7 @@ export default function AssessmentPage() {
             </header>
 
             <main>
-                <Card className="shadow-2xl shadow-primary/10">
+                <Card className="shadow-2xl shadow-primary/10 overflow-hidden">
                 <CardHeader>
                     <CardTitle className="text-2xl">Mental Wellness Check-in</CardTitle>
                     <CardDescription>
@@ -136,31 +155,21 @@ export default function AssessmentPage() {
                 </CardHeader>
                 <CardContent>
                     <div className="w-full mb-6">
-                        <Progress value={progress} className="w-full" />
-                        <p className="text-right text-sm text-muted-foreground mt-1">{Math.round(progress)}% complete</p>
+                        <Progress value={progress} className="w-full h-2" />
+                        <p className="text-right text-sm text-muted-foreground mt-2">{currentQuestionIndex + 1} of {questions.length}</p>
                     </div>
                     <form onSubmit={(e) => e.preventDefault()} className="space-y-8">
                         <div key={currentQuestion.id} className="space-y-4">
-                        <Label className="text-base">{currentQuestionIndex + 1}. {currentQuestion.text}</Label>
-                        <RadioGroup onValueChange={(value) => handleValueChange(currentQuestion.id, value)} value={answers[currentQuestion.id]} className="space-y-2">
+                        <Label className="text-base font-semibold">{currentQuestionIndex + 1}. {currentQuestion.text}</Label>
+                        <RadioGroup onValueChange={(value) => handleValueChange(currentQuestion.id, value)} value={answers[currentQuestion.id] || ''} className="space-y-2">
                             {options.map((option) => (
-                            <div key={option.value} className="flex items-center space-x-2">
+                            <div key={option.value} className="flex items-center space-x-3 p-3 border rounded-lg has-[:checked]:bg-primary/10 has-[:checked]:border-primary transition-colors">
                                 <RadioGroupItem value={option.value} id={`${currentQuestion.id}-${option.value}`} />
-                                <Label htmlFor={`${currentQuestion.id}-${option.value}`}>{option.label}</Label>
+                                <Label htmlFor={`${currentQuestion.id}-${option.value}`} className="w-full cursor-pointer">{option.label}</Label>
                             </div>
                             ))}
                         </RadioGroup>
                         </div>
-                    
-                        {currentQuestionIndex < questions.length - 1 ? (
-                            <Button onClick={handleNext} className="w-full" size="lg" disabled={!answers[currentQuestion.id]}>
-                                Next
-                            </Button>
-                        ) : (
-                            <Button onClick={handleSubmit} className="w-full" size="lg" disabled={!answers[currentQuestion.id]}>
-                                See My Results
-                            </Button>
-                        )}
                     </form>
                 </CardContent>
                 </Card>
