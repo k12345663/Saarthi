@@ -2,12 +2,12 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Bot, Calendar, CalendarCheck2, Heart } from 'lucide-react';
-import Chatbot from '@/components/chatbot';
+import { Calendar, CalendarCheck2, Heart, Bell, History } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
+import Chatbot from '@/components/chatbot';
 
 const mentalHealthScore = 72;
 
@@ -79,35 +79,34 @@ export default function DashboardPage() {
               </CardFooter>
             </Card>
 
-             {/* Talk to Saarthi Card - Removed button */}
+             {/* Reminders Card */}
             <Card>
               <CardHeader>
-                  <div className='flex items-center gap-2'>
-                      <Bot className="w-6 h-6" />
-                      <CardTitle>Talk to Saarthi</CardTitle>
-                  </div>
-                <CardDescription>
-                  Get immediate support from your privacy-first mental health assistant. Access the chat via the sidebar.
+                <div className='flex items-center gap-2'>
+                  <Bell className="w-6 h-6" />
+                  <CardTitle>Reminders</CardTitle>
+                </div>
+                 <CardDescription>
+                  Upcoming tasks and events to support your wellness journey.
                 </CardDescription>
               </CardHeader>
+               <CardContent className='space-y-4'>
+                  <div className='flex items-center justify-between gap-4 p-3 rounded-lg bg-accent/50'>
+                    <div className='flex items-center gap-4'>
+                        <Bell className='w-5 h-5 text-primary'/>
+                        <div>
+                          <p className='font-semibold'>Journal Entry</p>
+                          <p className='text-sm text-muted-foreground'>Due today</p>
+                        </div>
+                    </div>
+                    <Button variant="secondary" size="sm">View</Button>
+                  </div>
+              </CardContent>
             </Card>
           </div>
 
           {/* Right column */}
           <div className="space-y-6">
-            {/* Book Appointment Card - Removed button */}
-            <Card>
-              <CardHeader>
-                <div className='flex items-center gap-2'>
-                  <Calendar className="w-6 h-6" />
-                  <CardTitle>Book Appointment</CardTitle>
-                </div>
-                <CardDescription>
-                  Schedule a session with a mental health professional via the sidebar.
-                </CardDescription>
-              </CardHeader>
-            </Card>
-
             {/* Upcoming Appointments Card */}
             <Card>
               <CardHeader>
@@ -120,21 +119,49 @@ export default function DashboardPage() {
                 </CardDescription>
               </CardHeader>
               <CardContent className='space-y-4'>
-                  <div className='flex items-center gap-4 p-3 rounded-lg bg-accent/50'>
-                    <Calendar className='w-5 h-5 text-primary'/>
-                    <div>
-                      <p className='font-semibold'>Dr. Anjali Sharma</p>
-                      <p className='text-sm text-muted-foreground'>Tomorrow at 2:00 PM</p>
+                  <div className='flex items-start justify-between gap-4 p-3 rounded-lg bg-accent/50'>
+                    <div className='flex items-center gap-4'>
+                      <Calendar className='w-5 h-5 text-primary mt-1'/>
+                      <div>
+                        <p className='font-semibold'>Dr. Anjali Sharma</p>
+                        <p className='text-sm text-muted-foreground'>Tomorrow at 2:00 PM</p>
+                      </div>
                     </div>
+                     <Button variant="ghost" size="sm">Reschedule</Button>
                   </div>
-                   <div className='flex items-center gap-4 p-3 rounded-lg bg-accent/50'>
-                    <Calendar className='w-5 h-5 text-primary'/>
-                    <div>
-                      <p className='font-semibold'>Mr. Rohan Gupta</p>
-                      <p className='text-sm text-muted-foreground'>Next week, Tuesday at 11:00 AM</p>
+                   <div className='flex items-start justify-between gap-4 p-3 rounded-lg bg-accent/50'>
+                    <div className='flex items-center gap-4'>
+                        <Calendar className='w-5 h-5 text-primary mt-1'/>
+                        <div>
+                          <p className='font-semibold'>Mr. Rohan Gupta</p>
+                          <p className='text-sm text-muted-foreground'>Next week, Tuesday at 11:00 AM</p>
+                        </div>
                     </div>
+                    <Button variant="ghost" size="sm">Reschedule</Button>
                   </div>
               </CardContent>
+            </Card>
+            
+            {/* Appointment History Card */}
+            <Card>
+                <CardHeader>
+                    <div className='flex items-center gap-2'>
+                        <History className="w-6 h-6" />
+                        <CardTitle>Appointment History</CardTitle>
+                    </div>
+                    <CardDescription>
+                        A log of your past sessions.
+                    </CardDescription>
+                </CardHeader>
+                <CardContent className='space-y-4'>
+                    <div className='flex items-center gap-4 p-3 rounded-lg bg-accent/50 opacity-70'>
+                        <CalendarCheck2 className='w-5 h-5 text-muted-foreground'/>
+                        <div>
+                        <p className='font-semibold'>Dr. Anjali Sharma</p>
+                        <p className='text-sm text-muted-foreground'>Completed on May 15, 2024</p>
+                        </div>
+                    </div>
+                </CardContent>
             </Card>
           </div>
         </div>
