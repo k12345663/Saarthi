@@ -13,7 +13,56 @@ import Link from 'next/link';
 import { HeartPulse, MessageSquare, CalendarPlus, LogOut, Settings, UserCircle, BotMessageSquare, BookOpen, LayoutDashboard } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
+import { Skeleton } from '@/components/ui/skeleton';
+
+function DashboardLayoutSkeleton() {
+    return (
+    <div className="flex flex-col bg-background min-h-screen p-4 md:p-6 lg:p-8">
+      {/* Header */}
+      <div className="mb-6">
+        <Skeleton className="h-8 w-1/3 mb-2" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Card 1 */}
+          <div className="p-6 rounded-lg border bg-card">
+            <Skeleton className="h-6 w-1/2 mb-4" />
+            <Skeleton className="h-10 w-1/4 mb-2" />
+            <Skeleton className="h-4 w-1/3 mb-4" />
+            <Skeleton className="h-2 w-full" />
+          </div>
+          {/* Card 2 */}
+           <div className="p-6 rounded-lg border bg-card">
+            <Skeleton className="h-6 w-1/2 mb-4" />
+            <Skeleton className="h-5 w-1/4 mb-2" />
+            <Skeleton className="h-4 w-1/3" />
+            <div className="mt-6">
+                <Skeleton className="h-10 w-full" />
+            </div>
+          </div>
+        </div>
+        {/* Right Column */}
+        <div className="space-y-6">
+          {/* Card 4 */}
+          <div className="p-6 rounded-lg border bg-card">
+             <Skeleton className="h-6 w-1/2 mb-4" />
+             <Skeleton className="h-4 w-3/4 mb-6" />
+             <div className="space-y-4">
+                <Skeleton className="h-16 w-full" />
+                <Skeleton className="h-16 w-full" />
+             </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 
 export default function DashboardLayout({
   children,
@@ -126,7 +175,9 @@ export default function DashboardLayout({
             </SidebarFooter>
         </Sidebar>
         <main className="flex-1 w-full overflow-y-auto">
-          {children}
+           <Suspense fallback={<DashboardLayoutSkeleton/>}>
+              {children}
+            </Suspense>
         </main>
       </div>
     </SidebarProvider>
