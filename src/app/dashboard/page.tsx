@@ -1,3 +1,4 @@
+
 'use client';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter } from '@/components/ui/card';
@@ -5,13 +6,14 @@ import { Button } from '@/components/ui/button';
 import { Calendar, CalendarCheck2, Heart, Bell, History } from 'lucide-react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { Progress } from '@/components/ui/progress';
 import Chatbot from '@/components/chatbot';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const mentalHealthScore = 72;
 
-export default function DashboardPage() {
+function Dashboard() {
   const searchParams = useSearchParams();
   const [isAnonymous, setIsAnonymous] = useState(false);
 
@@ -169,3 +171,91 @@ export default function DashboardPage() {
     </div>
   );
 }
+
+function DashboardPageSkeleton() {
+    return (
+    <div className="flex flex-col bg-background min-h-screen p-4 md:p-6 lg:p-8">
+      {/* Header */}
+      <div className="mb-6">
+        <Skeleton className="h-8 w-1/3 mb-2" />
+        <Skeleton className="h-4 w-1/2" />
+      </div>
+
+      {/* Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Left Column */}
+        <div className="lg:col-span-2 space-y-6">
+          {/* Card 1 */}
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-1/2" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-10 w-1/4 mb-2" />
+              <Skeleton className="h-4 w-1/3 mb-4" />
+              <Skeleton className="h-2 w-full" />
+            </CardContent>
+          </Card>
+          {/* Card 2 */}
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-1/2" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-5 w-1/4 mb-2" />
+              <Skeleton className="h-4 w-1/3" />
+            </CardContent>
+            <CardFooter>
+              <Skeleton className="h-10 w-full" />
+            </CardFooter>
+          </Card>
+          {/* Card 3 */}
+          <Card>
+            <CardHeader>
+              <Skeleton className="h-6 w-1/2 mb-2" />
+              <Skeleton className="h-4 w-3/4" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-16 w-full" />
+            </CardContent>
+          </Card>
+        </div>
+        {/* Right Column */}
+        <div className="space-y-6">
+          {/* Card 4 */}
+          <Card>
+            <CardHeader>
+               <Skeleton className="h-6 w-1/2 mb-2" />
+               <Skeleton className="h-4 w-3/4" />
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <Skeleton className="h-16 w-full" />
+              <Skeleton className="h-16 w-full" />
+            </CardContent>
+          </Card>
+          {/* Card 5 */}
+          <Card>
+            <CardHeader>
+               <Skeleton className="h-6 w-1/2 mb-2" />
+               <Skeleton className="h-4 w-3/4" />
+            </CardHeader>
+            <CardContent>
+              <Skeleton className="h-16 w-full" />
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+export default function DashboardPage() {
+  return (
+    <Suspense fallback={<DashboardPageSkeleton />}>
+      <Dashboard />
+    </Suspense>
+  );
+}
+
+    
