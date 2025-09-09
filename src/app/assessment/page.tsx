@@ -47,21 +47,22 @@ function Assessment() {
   }, [searchParams]);
 
   const handleValueChange = (questionId: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: value }));
-    // Automatically move to the next question
-    setTimeout(() => {
-        if (currentQuestionIndex < questions.length - 1) {
-            setCurrentQuestionIndex(currentQuestionIndex + 1);
-        } else {
-            // Wait for user to see the last selection before calculating score
-             setTimeout(() => handleSubmit(), 200);
-        }
-    }, 300);
+    const newAnswers = { ...answers, [questionId]: value };
+    setAnswers(newAnswers);
+
+    // Automatically move to the next question, but don't submit automatically
+    if (currentQuestionIndex < questions.length - 1) {
+      setTimeout(() => {
+          setCurrentQuestionIndex(currentQuestionIndex + 1);
+      }, 300);
+    }
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
     if (Object.keys(answers).length !== questions.length) {
-        // This check is less likely to fail with auto-advance, but good to have
+        // This check is important now that submission is manual
+        alert("Please answer all questions before submitting.");
         return;
     }
     const totalScore = Object.values(answers).reduce((acc, val) => acc + parseInt(val, 10), 0);
@@ -83,6 +84,7 @@ function Assessment() {
 
   const progress = ((currentQuestionIndex + 1) / questions.length) * 100;
   const currentQuestion = questions[currentQuestionIndex];
+  const allQuestionsAnswered = Object.keys(answers).length === questions.length;
 
   if (score !== null) {
     const { level, advice, coping } = getDepressionSeverity(score);
@@ -156,7 +158,7 @@ function Assessment() {
                         <Progress value={progress} className="w-full h-2" />
                         <p className="text-right text-sm text-muted-foreground mt-2">{currentQuestionIndex + 1} of {questions.length}</p>
                     </div>
-                    <form onSubmit={(e) => e.preventDefault()} className="space-y-8">
+                    <form onSubmit={handleSubmit} className="space-y-8">
                         <div key={currentQuestion.id} className="space-y-4">
                         <Label className="text-base font-semibold">{currentQuestionIndex + 1}. {currentQuestion.text}</Label>
                         <RadioGroup onValueChange={(value) => handleValueChange(currentQuestion.id, value)} value={answers[currentQuestion.id] || ''} className="space-y-2">
@@ -168,6 +170,11 @@ function Assessment() {
                             ))}
                         </RadioGroup>
                         </div>
+                         {currentQuestionIndex === questions.length - 1 && (
+                            <Button type="submit" className="w-full" disabled={!allQuestionsAnswered}>
+                                Submit Assessment
+                            </Button>
+                        )}
                     </form>
                 </CardContent>
                 </Card>
