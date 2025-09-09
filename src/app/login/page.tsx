@@ -51,7 +51,7 @@ export default function LoginPage() {
                     Forgot your password?
                   </Link>
                 </div>
-                <Input id="password" type="password" defaultValue="barhate@lths" required />
+                <Input id="password" type="password" defaultValue="12345678" required />
               </div>
               <Button type="submit" className="w-full">
                 Sign in
