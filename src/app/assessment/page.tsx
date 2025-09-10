@@ -38,12 +38,10 @@ function Assessment() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [score, setScore] = useState<number | null>(null);
-  const [isAnonymous, setIsAnonymous] = useState(true);
 
   useEffect(() => {
     const signedInParam = searchParams.get('signedin');
     setIsSignedIn(signedInParam === 'true');
-    setIsAnonymous(signedInParam !== 'true');
   }, [searchParams]);
 
   const handleValueChange = (questionId: string, value: string) => {
@@ -228,9 +226,6 @@ function AssessmentPageSkeleton() {
   )
 }
 
-// This is the component that will be rendered on the server.
-// It wraps the actual Assessment component in a Suspense boundary.
-// This tells Next.js to show the skeleton while the client-side component loads.
 export default function AssessmentPage() {
   return (
     <Suspense fallback={<AssessmentPageSkeleton />}>
