@@ -1,12 +1,13 @@
+
 'use client';
 
-import { useState, useRef, useEffect, forwardRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { chatbotSupport } from '@/ai/flows/supportive-chatbot';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, User, Bot } from 'lucide-react';
-import { ScrollArea, ScrollAreaPrimitive } from '@/components/ui/scroll-area';
+import { Send, User, Bot, Sparkles } from 'lucide-react';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
 interface Message {
@@ -14,40 +15,25 @@ interface Message {
   sender: 'user' | 'bot';
 }
 
-// Custom ScrollArea to get a ref to the viewport
-const ChatScrollArea = forwardRef<
-  React.ElementRef<typeof ScrollAreaPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
->(({ className, children, ...props }, ref) => (
-  <ScrollAreaPrimitive.Root
-    ref={ref}
-    className={cn("relative overflow-hidden", className)}
-    {...props}
-  >
-    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
-      {children}
-    </ScrollAreaPrimitive.Viewport>
-    <ScrollAreaPrimitive.ScrollAreaScrollbar>
-        <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
-    </ScrollAreaPrimitive.ScrollAreaScrollbar>
-    <ScrollAreaPrimitive.Corner />
-  </ScrollAreaPrimitive.Root>
-));
-ChatScrollArea.displayName = 'ChatScrollArea';
-
+const quickReplies = [
+  { label: 'Breathing exercise', command: '/exercise' },
+  { label: 'Sleep tips', command: '/sleep' },
+  { label: 'Book a session', command: '/book' },
+  { label: 'Find resources', command: '/resources' },
+];
 
 export default function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
-    { sender: 'bot', text: 'Hello! How are you feeling today?' }
+    { sender: 'bot', text: "Hello! I am Saarthi, your friendly mental health companion. How are you feeling today?" }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const handleSend = async () => {
-    if (input.trim() === '') return;
+  const sendMessage = async (messageText: string) => {
+    if (messageText.trim() === '') return;
 
-    const userMessage: Message = { text: input, sender: 'user' };
+    const userMessage: Message = { text: messageText, sender: 'user' };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput('');
@@ -70,6 +56,14 @@ export default function Chatbot() {
     }
   };
 
+  const handleSend = () => {
+    sendMessage(input);
+  };
+  
+  const handleQuickReply = (command: string) => {
+    sendMessage(command);
+  }
+
   useEffect(() => {
     if (scrollAreaRef.current) {
         const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
@@ -81,61 +75,77 @@ export default function Chatbot() {
 
   return (
     <div className="flex flex-col h-full">
-        <ChatScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
-          <div className="space-y-4">
-            {messages.map((message, index) => (
-              <div
-                key={index}
-                className={cn(
-                  'flex items-start gap-3',
-                  message.sender === 'user' ? 'justify-end' : 'justify-start'
-                )}
-              >
-                {message.sender === 'bot' && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>
-                      <Bot />
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-                <div
-                  className={cn(
-                    'max-w-xs rounded-lg p-3 text-sm md:max-w-md',
-                    message.sender === 'user'
-                      ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
-                  )}
-                >
-                  <p className="whitespace-pre-wrap">{message.text}</p>
-                </div>
-                {message.sender === 'user' && (
-                  <Avatar className="h-8 w-8">
-                    <AvatarFallback>
-                      <User />
-                    </AvatarFallback>
-                  </Avatar>
-                )}
-              </div>
-            ))}
-            {isLoading && (
-              <div className="flex items-start gap-3 justify-start">
-                <Avatar className="h-8 w-8">
+      <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+        <div className="space-y-4">
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={cn(
+                'flex items-start gap-3',
+                message.sender === 'user' ? 'justify-end' : 'justify-start'
+              )}
+            >
+              {message.sender === 'bot' && (
+                <Avatar className="h-8 w-8 bg-primary/10 text-primary">
                   <AvatarFallback>
                     <Bot />
                   </AvatarFallback>
                 </Avatar>
-                <div className="max-w-xs rounded-lg p-3 text-sm bg-muted md:max-w-md">
-                  <div className="flex items-center space-x-1">
-                      <span className="h-2 w-2 animate-pulse rounded-full bg-foreground/50 [animation-delay:-0.3s]"></span>
-                      <span className="h-2 w-2 animate-pulse rounded-full bg-foreground/50 [animation-delay:-0.15s]"></span>
-                      <span className="h-2 w-2 animate-pulse rounded-full bg-foreground/50"></span>
-                  </div>
+              )}
+              <div
+                className={cn(
+                  'max-w-xs rounded-lg p-3 text-sm md:max-w-md',
+                  message.sender === 'user'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted'
+                )}
+              >
+                <p className="whitespace-pre-wrap">{message.text}</p>
+              </div>
+              {message.sender === 'user' && (
+                <Avatar className="h-8 w-8">
+                  <AvatarFallback>
+                    <User />
+                  </AvatarFallback>
+                </Avatar>
+              )}
+            </div>
+          ))}
+          {isLoading && (
+            <div className="flex items-start gap-3 justify-start">
+              <Avatar className="h-8 w-8 bg-primary/10 text-primary">
+                <AvatarFallback>
+                  <Bot />
+                </AvatarFallback>
+              </Avatar>
+              <div className="max-w-xs rounded-lg p-3 text-sm bg-muted md:max-w-md">
+                <div className="flex items-center space-x-1">
+                    <span className="h-2 w-2 animate-pulse rounded-full bg-foreground/50 [animation-delay:-0.3s]"></span>
+                    <span className="h-2 w-2 animate-pulse rounded-full bg-foreground/50 [animation-delay:-0.15s]"></span>
+                    <span className="h-2 w-2 animate-pulse rounded-full bg-foreground/50"></span>
                 </div>
               </div>
-            )}
-          </div>
-        </ChatScrollArea>
-        <div className="flex items-center gap-2 p-4 border-t bg-background">
+            </div>
+          )}
+        </div>
+      </ScrollArea>
+      <div className="p-4 border-t bg-background space-y-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
+            {quickReplies.map((reply) => (
+                <Button 
+                    key={reply.command} 
+                    variant="outline" 
+                    size="sm" 
+                    className="text-xs justify-start"
+                    onClick={() => handleQuickReply(reply.command)}
+                    disabled={isLoading}
+                >
+                    <Sparkles className="w-3 h-3 mr-2" />
+                    {reply.label}
+                </Button>
+            ))}
+        </div>
+        <div className="flex items-center gap-2">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
@@ -144,10 +154,11 @@ export default function Chatbot() {
             disabled={isLoading}
             className="flex-1"
           />
-          <Button onClick={handleSend} disabled={isLoading}>
+          <Button onClick={handleSend} disabled={isLoading || !input.trim()}>
             <Send className="h-4 w-4" />
           </Button>
         </div>
+      </div>
     </div>
   );
 }

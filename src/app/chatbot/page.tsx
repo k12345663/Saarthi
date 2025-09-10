@@ -7,8 +7,8 @@ import { HeartPulse } from 'lucide-react';
 
 export default function ChatbotPage() {
     return (
-        <div className="flex items-center justify-center min-h-screen bg-muted/40 p-0 md:p-4">
-          <Card className="w-full h-screen md:h-[80vh] md:max-w-2xl md:shadow-2xl md:rounded-2xl overflow-hidden">
+        <div className="flex items-center justify-center h-dvh bg-muted/40 p-0 md:p-4">
+          <Card className="w-full h-full md:h-[80vh] md:max-w-2xl md:shadow-2xl md:rounded-2xl overflow-hidden flex flex-col">
              <CardHeader className="p-4 border-b">
                 <div className="flex items-center gap-3">
                     <HeartPulse className="w-6 h-6 text-primary" />
@@ -18,7 +18,7 @@ export default function ChatbotPage() {
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="p-0 h-[calc(100%-92px)]">
+            <CardContent className="p-0 flex-1">
                 <Chatbot />
             </CardContent>
           </Card>
