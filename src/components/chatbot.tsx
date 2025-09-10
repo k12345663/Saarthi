@@ -5,7 +5,7 @@ import { chatbotSupport } from '@/ai/flows/supportive-chatbot';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, User, Bot } from 'lucide-react';
+import { Send, User, Bot, Zap } from 'lucide-react';
 import { ScrollArea, ScrollAreaPrimitive } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
@@ -14,7 +14,13 @@ interface Message {
   sender: 'user' | 'bot';
 }
 
-// Custom ScrollArea to get a ref to the viewport
+const quickReplies = [
+  { label: 'Breathing exercise', command: '/exercise' },
+  { label: 'Sleep tips', command: '/sleep' },
+  { label: 'Book a session', command: '/book' },
+  { label: 'Find resources', command: '/resources' },
+];
+
 const ChatScrollArea = forwardRef<
   React.ElementRef<typeof ScrollAreaPrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
@@ -38,22 +44,23 @@ ChatScrollArea.displayName = 'ChatScrollArea';
 
 export default function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
-    { sender: 'bot', text: 'Hello! How are you feeling today?' }
+    { sender: 'bot', text: 'Hello! I am Saarthi, your friendly mental health companion. How are you feeling today?' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  const handleSend = async () => {
-    if (input.trim() === '') return;
+  const sendMessage = async (messageText: string) => {
+    if (messageText.trim() === '') return;
 
-    const userMessage: Message = { text: input, sender: 'user' };
+    const userMessage: Message = { text: messageText, sender: 'user' };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setInput('');
     setIsLoading(true);
 
     try {
+      // Create a concise history for the AI model
       const history = newMessages.slice(-10).map(m => `${m.sender}: ${m.text}`).join('\n');
       const result = await chatbotSupport({ message: history });
       const botMessage: Message = { text: result.response, sender: 'bot' };
@@ -70,6 +77,14 @@ export default function Chatbot() {
     }
   };
 
+  const handleSend = () => {
+    sendMessage(input);
+  };
+  
+  const handleQuickReply = (command: string) => {
+    sendMessage(command);
+  }
+
   useEffect(() => {
     if (scrollAreaRef.current) {
         const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
@@ -80,7 +95,7 @@ export default function Chatbot() {
   }, [messages]);
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-background">
         <ChatScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
           <div className="space-y-4">
             {messages.map((message, index) => (
@@ -92,7 +107,7 @@ export default function Chatbot() {
                 )}
               >
                 {message.sender === 'bot' && (
-                  <Avatar className="h-8 w-8">
+                  <Avatar className="h-8 w-8 bg-primary/10 text-primary">
                     <AvatarFallback>
                       <Bot />
                     </AvatarFallback>
@@ -103,7 +118,7 @@ export default function Chatbot() {
                     'max-w-xs rounded-lg p-3 text-sm md:max-w-md',
                     message.sender === 'user'
                       ? 'bg-primary text-primary-foreground'
-                      : 'bg-muted'
+                      : 'bg-muted text-foreground'
                   )}
                 >
                   <p className="whitespace-pre-wrap">{message.text}</p>
@@ -119,7 +134,7 @@ export default function Chatbot() {
             ))}
             {isLoading && (
               <div className="flex items-start gap-3 justify-start">
-                <Avatar className="h-8 w-8">
+                <Avatar className="h-8 w-8 bg-primary/10 text-primary">
                   <AvatarFallback>
                     <Bot />
                   </AvatarFallback>
@@ -135,16 +150,36 @@ export default function Chatbot() {
             )}
           </div>
         </ChatScrollArea>
+        
+        {/* Quick Replies Section */}
+         <div className="p-2 border-t bg-background">
+            <div className="flex flex-wrap items-center justify-center gap-2">
+                 {quickReplies.map((reply) => (
+                    <Button 
+                        key={reply.command} 
+                        variant="outline" 
+                        size="sm"
+                        onClick={() => handleQuickReply(reply.command)}
+                        disabled={isLoading}
+                        className="text-xs"
+                    >
+                        <Zap className="w-3 h-3 mr-2" />
+                        {reply.label}
+                    </Button>
+                ))}
+            </div>
+        </div>
+
         <div className="flex items-center gap-2 p-4 border-t bg-background">
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            onKeyPress={(e) => e.key === 'Enter' && handleSend()}
+            onKeyPress={(e) => e.key === 'Enter' && !isLoading && handleSend()}
             placeholder="Type your message..."
             disabled={isLoading}
             className="flex-1"
           />
-          <Button onClick={handleSend} disabled={isLoading}>
+          <Button onClick={handleSend} disabled={isLoading || !input.trim()}>
             <Send className="h-4 w-4" />
           </Button>
         </div>
