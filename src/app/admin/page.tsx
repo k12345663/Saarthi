@@ -49,6 +49,10 @@ const chartConfig: ChartConfig = {
     label: "Severe",
     color: "hsl(var(--chart-5))",
   },
+  problems: {
+    label: 'Reported Issues',
+    color: 'hsl(var(--chart-2))',
+  },
 } satisfies ChartConfig;
 
 
@@ -68,6 +72,14 @@ const studentData = [
   { id: 'STU-004', date: '2024-06-14', score: 3, level: 'None-Minimal' },
   { id: 'STU-005', date: '2024-06-13', score: 18, level: 'Moderately Severe' },
   { id: 'STU-006', date: '2024-06-12', score: 5, level: 'Mild' },
+];
+
+const commonProblemsData = [
+  { problem: 'Anxiety', count: 350, fill: 'hsl(var(--chart-1))' },
+  { problem: 'Low Energy', count: 420, fill: 'hsl(var(--chart-2))' },
+  { problem: 'Sleep Issues', count: 280, fill: 'hsl(var(--chart-3))' },
+  { problem: 'Concentration', count: 310, fill: 'hsl(var(--chart-4))' },
+  { problem: 'Low Self-Esteem', count: 250, fill: 'hsl(var(--chart-5))' },
 ];
 
 
@@ -142,17 +154,17 @@ export default function AdminDashboardPage() {
         </div>
 
         {/* Charts */}
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-            <Card className="lg:col-span-4">
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-2">
+            <Card>
                 <CardHeader>
                     <CardTitle>Assessment Score Distribution</CardTitle>
                     <CardDescription>Distribution of student wellness levels based on PHQ-9 scores.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                   <ChartContainer config={chartConfig} className="min-h-[200px] w-full">
+                   <ChartContainer config={chartConfig} className="min-h-[250px] w-full">
                         <RechartsBarChart accessibilityLayer data={assessmentDistribution}>
                            <CartesianGrid vertical={false} />
-                           <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} />
+                           <XAxis dataKey="name" tickLine={false} tickMargin={10} axisLine={false} tickFormatter={(value) => value.replace('-', ' ')} />
                            <YAxis />
                             <ChartTooltip content={<ChartTooltipContent />} />
                            <Bar dataKey="value" name="Students" radius={4} />
@@ -160,13 +172,13 @@ export default function AdminDashboardPage() {
                     </ChartContainer>
                 </CardContent>
             </Card>
-             <Card className="lg:col-span-3">
+             <Card>
                 <CardHeader>
                     <CardTitle>At-Risk Trends</CardTitle>
                     <CardDescription>Number of students identified as at-risk over the last 6 months.</CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <ChartContainer config={{atRisk: { label: "At-Risk", color: "hsl(var(--destructive))"}}} className="min-h-[200px] w-full">
+                    <ChartContainer config={{atRisk: { label: "At-Risk", color: "hsl(var(--destructive))"}}} className="min-h-[250px] w-full">
                        <RechartsLineChart accessibilityLayer data={trendsData}>
                            <CartesianGrid vertical={false} />
                            <XAxis dataKey="month" tickLine={false} tickMargin={10} axisLine={false} />
@@ -181,6 +193,26 @@ export default function AdminDashboardPage() {
                 </CardContent>
             </Card>
         </div>
+
+        {/* New Common Problems Chart */}
+        <Card>
+            <CardHeader>
+                <CardTitle>Commonly Reported Problems</CardTitle>
+                <CardDescription>Aggregated data showing the most common issues students are facing.</CardDescription>
+            </CardHeader>
+            <CardContent>
+                 <ChartContainer config={chartConfig} className="min-h-[300px] w-full">
+                    <RechartsBarChart layout="vertical" accessibilityLayer data={commonProblemsData}>
+                       <CartesianGrid horizontal={false} />
+                        <YAxis dataKey="problem" type="category" tickLine={false} tickMargin={10} axisLine={false} width={100} />
+                        <XAxis type="number" />
+                        <ChartTooltip content={<ChartTooltipContent />} />
+                        <Legend />
+                        <Bar dataKey="count" name="Students" layout="vertical" radius={4} fill="var(--color-problems)" />
+                    </RechartsBarChart>
+                </ChartContainer>
+            </CardContent>
+        </Card>
 
         {/* Student Data Table */}
         <Card>
@@ -221,3 +253,5 @@ export default function AdminDashboardPage() {
     </div>
   );
 }
+
+    
