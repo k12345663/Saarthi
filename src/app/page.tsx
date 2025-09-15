@@ -144,16 +144,18 @@ export default function Home() {
         </section>
       </main>
       <footer className="bg-background border-t">
-        <div className="container mx-auto py-6 px-4 md:px-6 flex flex-col md:flex-row items-center justify-between">
+        <div className="container mx-auto py-6 px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
                 <HeartPulse className="h-5 w-5 text-primary" />
                 <span className="font-semibold">Saarthi</span>
             </div>
-            <p className="text-sm text-muted-foreground mt-4 md:mt-0">© SIH Team Saarthi. All rights reserved.</p>
-            <nav className="flex gap-4 mt-4 md:mt-0">
+             <nav className="flex flex-wrap justify-center gap-x-4 gap-y-2">
+                <Link href="/admin/login" className="text-sm hover:underline" prefetch={false}>Admin Login</Link>
+                <Link href="/iqac/login" className="text-sm hover:underline" prefetch={false}>IQAC Login</Link>
                 <Link href="#" className="text-sm hover:underline" prefetch={false}>Privacy Policy</Link>
                 <Link href="#" className="text-sm hover:underline" prefetch={false}>Terms of Service</Link>
             </nav>
+            <p className="text-sm text-muted-foreground text-center md:text-right">© SIH Team Saarthi. All rights reserved.</p>
         </div>
       </footer>
       <style jsx>{`
