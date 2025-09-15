@@ -153,6 +153,7 @@ export default function Home() {
             <nav className="flex gap-4 mt-4 md:mt-0">
                 <Link href="#" className="text-sm hover:underline" prefetch={false}>Privacy Policy</Link>
                 <Link href="#" className="text-sm hover:underline" prefetch={false}>Terms of Service</Link>
+                <Link href="/iqac/login" className="text-sm hover:underline" prefetch={false}>IQAC Login</Link>
             </nav>
         </div>
       </footer>
