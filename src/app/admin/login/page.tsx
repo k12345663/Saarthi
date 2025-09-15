@@ -29,7 +29,7 @@ export default function AdminLoginPage() {
         </div>
         <Card className="shadow-2xl shadow-primary/10">
           <CardHeader>
-            <CardTitle className="text-2xl">Admin Analytics Login</CardTitle>
+            <CardTitle className="text-2xl">College Admin Login</CardTitle>
             <CardDescription>Enter your credentials to access the student wellness dashboard.</CardDescription>
           </CardHeader>
           <CardContent>
