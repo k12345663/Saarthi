@@ -155,8 +155,8 @@ export default function Home() {
              <nav className="flex flex-wrap justify-center gap-x-4 gap-y-2">
                 <Link href="/admin/login" className="text-sm hover:underline" prefetch={false}>Admin Login</Link>
                 <Link href="/iqac/login" className="text-sm hover:underline" prefetch={false}>IQAC Login</Link>
-                <Link href="#" className="text-sm hover:underline" prefetch={false}>Privacy Policy</Link>
-                <Link href="#" className="text-sm hover:underline" prefetch={false}>Terms of Service</Link>
+                <Link href="/privacy-policy" className="text-sm hover:underline" prefetch={false}>Privacy Policy</Link>
+                <Link href="/terms-of-service" className="text-sm hover:underline" prefetch={false}>Terms of Service</Link>
             </nav>
             <p className="text-sm text-muted-foreground text-center md:text-right">© SIH Team Saarthi. All rights reserved.</p>
         </div>
