@@ -6,7 +6,7 @@ import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Send, User, Bot, Zap } from 'lucide-react';
-import { ScrollArea, ScrollAreaPrimitive } from '@/components/ui/scroll-area';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 
 interface Message {
@@ -21,27 +21,6 @@ const quickReplies = [
   { label: 'Find resources', command: '/resources' },
 ];
 
-const ChatScrollArea = forwardRef<
-  React.ElementRef<typeof ScrollAreaPrimitive.Root>,
-  React.ComponentPropsWithoutRef<typeof ScrollAreaPrimitive.Root>
->(({ className, children, ...props }, ref) => (
-  <ScrollAreaPrimitive.Root
-    ref={ref}
-    className={cn("relative overflow-hidden", className)}
-    {...props}
-  >
-    <ScrollAreaPrimitive.Viewport className="h-full w-full rounded-[inherit]">
-      {children}
-    </ScrollAreaPrimitive.Viewport>
-    <ScrollAreaPrimitive.ScrollAreaScrollbar>
-        <ScrollAreaPrimitive.ScrollAreaThumb className="relative flex-1 rounded-full bg-border" />
-    </ScrollAreaPrimitive.ScrollAreaScrollbar>
-    <ScrollAreaPrimitive.Corner />
-  </ScrollAreaPrimitive.Root>
-));
-ChatScrollArea.displayName = 'ChatScrollArea';
-
-
 export default function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
     { sender: 'bot', text: 'Hello! I am Saarthi, your friendly mental health companion. How are you feeling today?' }
@@ -49,19 +28,19 @@ export default function Chatbot() {
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
 
   const sendMessage = async (messageText: string) => {
     if (messageText.trim() === '') return;
 
     const userMessage: Message = { text: messageText, sender: 'user' };
-    const newMessages = [...messages, userMessage];
-    setMessages(newMessages);
+    setMessages((prev) => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
 
     try {
       // Create a concise history for the AI model
-      const history = newMessages.slice(-10).map(m => `${m.sender}: ${m.text}`).join('\n');
+      const history = [...messages, userMessage].slice(-10).map(m => `${m.sender}: ${m.text}`).join('\n');
       const result = await chatbotSupport({ message: history });
       const botMessage: Message = { text: result.response, sender: 'bot' };
       setMessages((prev) => [...prev, botMessage]);
@@ -86,17 +65,14 @@ export default function Chatbot() {
   }
 
   useEffect(() => {
-    if (scrollAreaRef.current) {
-        const viewport = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
-        if (viewport) {
-            viewport.scrollTop = viewport.scrollHeight;
-        }
+    if (viewportRef.current) {
+        viewportRef.current.scrollTop = viewportRef.current.scrollHeight;
     }
   }, [messages]);
 
   return (
     <div className="flex flex-col h-full bg-background">
-        <ChatScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
+        <ScrollArea className="flex-1 p-4" ref={scrollAreaRef} viewportRef={viewportRef}>
           <div className="space-y-4">
             {messages.map((message, index) => (
               <div
@@ -149,7 +125,7 @@ export default function Chatbot() {
               </div>
             )}
           </div>
-        </ChatScrollArea>
+        </ScrollArea>
         
         {/* Quick Replies Section */}
          <div className="p-2 border-t bg-background">

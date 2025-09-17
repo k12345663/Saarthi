@@ -37,6 +37,11 @@
     --sidebar-accent-foreground: 222.2 47.4% 11.2%;
     --sidebar-border: 214.3 31.8% 91.4%;
     --sidebar-ring: 204 80% 50%;
+    --color-success: 142.1 76.2% 36.3%;
+    --color-warning: 47.9 95.8% 53.1%;
+    --color-moderate: 25.9 95.3% 54.1%;
+    --color-severe: 0 92.9% 54.1%;
+    --color-critical: 0 100% 41%;
   }
   .dark {
     --background: 222.2 84% 4.9%;
@@ -71,6 +76,11 @@
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 217.2 32.6% 17.5%;
     --sidebar-ring: 204 75% 55%;
+    --color-success: 142.1 76.2% 36.3%;
+    --color-warning: 47.9 95.8% 53.1%;
+    --color-moderate: 25.9 95.3% 54.1%;
+    --color-severe: 0 92.9% 54.1%;
+    --color-critical: 0 100% 41%;
   }
 }
 

@@ -5,36 +5,32 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Calendar, CalendarCheck2, Heart, Bell, History, Bot, CalendarPlus } from 'lucide-react';
 import Link from 'next/link';
-import { useSearchParams } from 'next/navigation';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
-import Chatbot from '@/components/chatbot';
 
 const mentalHealthScore = 72;
 
 export default function DashboardClient() {
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [isAnonymous, setIsAnonymous] = useState(false);
 
   useEffect(() => {
-    // searchParams.get will be null on initial render, so we check for the string 'true'
-    setIsAnonymous(searchParams.get('anonymous') === 'true');
-  }, [searchParams]);
+    const anonymous = searchParams.get('anonymous') === 'true';
+    setIsAnonymous(anonymous);
+    if (anonymous) {
+      router.replace('/chatbot?anonymous=true');
+    }
+  }, [searchParams, router]);
 
   if (isAnonymous) {
+    // This will be briefly shown before redirecting
     return (
-      <div className="flex flex-col h-screen bg-background">
-        <header className="p-4 border-b">
-          <h1 className="text-xl font-bold">Welcome to Saarthi</h1>
-          <p className="text-muted-foreground">
-            Your friendly mental health companion. How can I help you today?
-          </p>
-        </header>
-        <main className="flex-1 overflow-y-auto">
-          <Chatbot />
-        </main>
-      </div>
-    );
+        <div className="flex items-center justify-center min-h-screen">
+            <p>Loading...</p>
+        </div>
+    )
   }
 
   return (
@@ -213,5 +209,3 @@ export default function DashboardClient() {
     </div>
   );
 }
-
-    

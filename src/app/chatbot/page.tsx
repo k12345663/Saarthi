@@ -4,11 +4,13 @@
 import Chatbot from '@/components/chatbot';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { HeartPulse } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 export default function ChatbotPage() {
+    const router = useRouter();
     return (
-        <div className="flex items-center justify-center min-h-screen bg-muted/40 p-0 md:p-4">
-          <Card className="w-full h-screen md:h-[80vh] md:max-w-2xl md:shadow-2xl md:rounded-2xl overflow-hidden">
+        <div className="flex items-center justify-center min-h-dvh bg-muted/40 p-0 md:p-4">
+          <Card className="w-full h-dvh md:h-[80vh] md:max-w-2xl md:shadow-2xl md:rounded-2xl overflow-hidden">
              <CardHeader className="p-4 border-b">
                 <div className="flex items-center gap-3">
                     <HeartPulse className="w-6 h-6 text-primary" />
@@ -18,7 +20,7 @@ export default function ChatbotPage() {
                     </div>
                 </div>
             </CardHeader>
-            <CardContent className="p-0 h-[calc(100%-92px)]">
+            <CardContent className="p-0 h-[calc(100%-80px)]">
                 <Chatbot />
             </CardContent>
           </Card>

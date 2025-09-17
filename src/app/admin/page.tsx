@@ -23,11 +23,11 @@ const assessmentData = [
 ];
 
 const severityData = [
-  { name: 'None-Minimal', value: 450, fill: 'var(--color-success)' },
-  { name: 'Mild', value: 250, fill: 'var(--color-warning)' },
-  { name: 'Moderate', value: 100, fill: 'var(--color-moderate)' },
-  { name: 'Moderately Severe', value: 35, fill: 'var(--color-severe)' },
-  { name: 'Severe', value: 15, fill: 'var(--color-critical)' },
+  { name: 'None-Minimal', value: 450, fill: 'hsl(var(--color-success))' },
+  { name: 'Mild', value: 250, fill: 'hsl(var(--color-warning))' },
+  { name: 'Moderate', value: 100, fill: 'hsl(var(--color-moderate))' },
+  { name: 'Moderately Severe', value: 35, fill: 'hsl(var(--color-severe))' },
+  { name: 'Severe', value: 15, fill: 'hsl(var(--color-critical))' },
 ];
 
 const studentDataTable = [

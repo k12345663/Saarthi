@@ -24,7 +24,7 @@ import { Calendar } from "@/components/ui/calendar";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Textarea } from "@/components/ui/textarea";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useSearchParams } from "next/navigation";
 
@@ -65,6 +65,7 @@ const counsellors = [
 
 export default function BookAppointmentForm() {
   const searchParams = useSearchParams();
+  const { toast } = useToast();
   const isAnonymous = searchParams.get('anonymous') === 'true';
 
   const form = useForm<AppointmentFormValues>({

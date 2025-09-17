@@ -7,7 +7,7 @@ import { HeartPulse, Bot, Users, BookOpen, ShieldCheck, Search, MessageSquare, P
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-background">
+    <div className="flex flex-col min-h-dvh bg-background">
       <header className="px-4 lg:px-6 h-14 flex items-center shadow-sm sticky top-0 z-50 bg-background/95 backdrop-blur-sm">
         <Link href="#" className="flex items-center justify-center" prefetch={false}>
           <HeartPulse className="h-6 w-6 text-primary" />
@@ -20,8 +20,8 @@ export default function Home() {
             <Link href="#how-it-works" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
                 How It Works
             </Link>
-             <Button asChild size="sm" variant="outline">
-                <Link href="/login">Sign In</Link>
+             <Button asChild size="sm">
+                <Link href="/login">Get Started</Link>
              </Button>
         </nav>
         <div className="lg:hidden ml-auto">
