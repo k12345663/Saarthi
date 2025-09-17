@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 function DashboardLayoutSkeleton() {
     return (
@@ -148,10 +149,11 @@ function DashboardLayoutContent({
                                 <UserCircle/>
                             </AvatarFallback>
                         </Avatar>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col flex-1">
                             <span className="font-semibold text-sm">Student</span>
                             <span className="text-xs text-muted-foreground">barhate@lths.com</span>
                         </div>
+                        <ThemeToggle />
                     </div>
                   </>
                 )}
@@ -171,9 +173,10 @@ function DashboardLayoutContent({
                                 <UserCircle/>
                             </AvatarFallback>
                         </Avatar>
-                        <div className="flex flex-col">
+                        <div className="flex flex-col flex-1">
                             <span className="font-semibold text-sm">Anonymous</span>
                         </div>
+                        <ThemeToggle />
                     </div>
                     </>
                 )}

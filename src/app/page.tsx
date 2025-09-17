@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HeartPulse, Bot, Users, BookOpen, ShieldCheck, Search, MessageSquare, PieChart } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
   return (
@@ -13,7 +14,7 @@ export default function Home() {
           <HeartPulse className="h-6 w-6 text-primary" />
           <span className="ml-2 text-xl font-bold tracking-tighter">Saarthi</span>
         </Link>
-        <nav className="ml-auto hidden lg:flex gap-4 sm:gap-6">
+        <nav className="ml-auto hidden lg:flex gap-4 sm:gap-6 items-center">
             <Link href="#features" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
                 Features
             </Link>
@@ -23,8 +24,10 @@ export default function Home() {
              <Button asChild size="sm">
                 <Link href="/login">Get Started</Link>
              </Button>
+             <ThemeToggle />
         </nav>
-        <div className="lg:hidden ml-auto">
+        <div className="lg:hidden ml-auto flex items-center gap-2">
+            <ThemeToggle />
              <Button asChild size="sm">
                 <Link href="/login">Get Started</Link>
              </Button>
