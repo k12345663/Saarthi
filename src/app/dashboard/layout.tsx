@@ -11,12 +11,22 @@ import {
   SidebarFooter,
 } from '@/components/ui/sidebar';
 import Link from 'next/link';
-import { HeartPulse, MessageSquare, CalendarPlus, LogOut, Settings, UserCircle, BotMessageSquare, BookOpen, LayoutDashboard } from 'lucide-react';
+import { HeartPulse, MessageSquare, CalendarPlus, LogOut, Settings, UserCircle, BotMessageSquare, BookOpen, LayoutDashboard, Copy, Check } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeToggle } from '@/components/theme-toggle';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
+import { Button } from '@/components/ui/button';
 
 function DashboardLayoutSkeleton() {
     return (
@@ -79,12 +89,18 @@ function DashboardLayoutContent({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const [continuityCode, setContinuityCode] = useState('');
+  const [showExitDialog, setShowExitDialog] = useState(false);
+  const [copied, setCopied] = useState(false);
 
   useEffect(() => {
-    setIsAnonymous(searchParams.get('anonymous') === 'true');
+    const anonymous = searchParams.get('anonymous') === 'true';
+    const code = searchParams.get('code') || '';
+    setIsAnonymous(anonymous);
+    setContinuityCode(code);
   }, [searchParams]);
   
-  const navQuery = isAnonymous ? '?anonymous=true' : '';
+  const navQuery = isAnonymous ? `?anonymous=true&code=${continuityCode}` : '';
 
   const signedInMenuItems = [
     { href: `/dashboard${navQuery}`, label: 'Dashboard', icon: LayoutDashboard },
@@ -95,11 +111,27 @@ function DashboardLayoutContent({
   ];
   
   const anonymousMenuItems = [
+      { href: `/dashboard${navQuery}`, label: 'Dashboard', icon: LayoutDashboard },
       { href: `/chatbot${navQuery}`, label: 'Chatbot', icon: BotMessageSquare },
       { href: `/book-appointment${navQuery}`, label: 'Book Appointment', icon: CalendarPlus },
   ];
 
   const menuItems = isAnonymous ? anonymousMenuItems : signedInMenuItems;
+
+  const handleExit = () => {
+    setShowExitDialog(true);
+  };
+  
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(continuityCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  const handleDialogClose = () => {
+    setShowExitDialog(false);
+    router.push('/');
+  }
 
   return (
     <SidebarProvider>
@@ -161,9 +193,9 @@ function DashboardLayoutContent({
                     <>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <SidebarMenuButton onClick={() => router.push('/')}>
+                            <SidebarMenuButton onClick={handleExit}>
                                 <LogOut />
-                                <span>Exit</span>
+                                <span>End Session</span>
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                     </SidebarMenu>
@@ -175,6 +207,7 @@ function DashboardLayoutContent({
                         </Avatar>
                         <div className="flex flex-col flex-1">
                             <span className="font-semibold text-sm">Anonymous</span>
+                            <span className="text-xs text-muted-foreground truncate">Code: {continuityCode}</span>
                         </div>
                         <ThemeToggle />
                     </div>
@@ -186,6 +219,31 @@ function DashboardLayoutContent({
            {children}
         </main>
       </div>
+      <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>End Anonymous Session?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Save your continuity code to resume your session later. You will be logged out.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <div className="my-4">
+            <div className="flex items-center justify-center p-4 bg-muted rounded-lg">
+                <p className="text-2xl font-bold tracking-widest">{continuityCode}</p>
+                <Button variant="ghost" size="icon" onClick={copyToClipboard} className="ml-4">
+                    {copied ? <Check className="text-green-500"/> : <Copy />}
+                </Button>
+            </div>
+            <p className="text-xs text-muted-foreground text-center mt-2">
+                Make sure you copy this code. You won't see it again after closing this dialog.
+            </p>
+          </div>
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={() => setShowExitDialog(false)}>Cancel</Button>
+            <AlertDialogAction onClick={handleDialogClose}>End Session & Exit</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </SidebarProvider>
   )
 }
@@ -201,3 +259,5 @@ export default function DashboardLayout({
     </Suspense>
   );
 }
+
+    
