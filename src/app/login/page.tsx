@@ -1,3 +1,4 @@
+
 'use client';
 
 import Link from 'next/link';
@@ -57,7 +58,7 @@ export default function LoginPage() {
                 Sign in
               </Button>
               <Button variant="outline" className="w-full" asChild>
-                <Link href="/assessment">Continue Anonymously</Link>
+                <Link href="/anonymous">Continue Anonymously</Link>
               </Button>
             </form>
             <div className="mt-4 text-center text-sm">

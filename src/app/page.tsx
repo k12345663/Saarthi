@@ -52,7 +52,7 @@ export default function Home() {
                     <Link href="/login">Sign in with College ID</Link>
                   </Button>
                   <Button asChild size="lg" variant="secondary" className="shadow-lg hover:shadow-xl transition-shadow">
-                    <Link href="/assessment">Continue Anonymously</Link>
+                    <Link href="/anonymous">Continue Anonymously</Link>
                   </Button>
                 </div>
               </div>
@@ -152,7 +152,7 @@ export default function Home() {
                 <HeartPulse className="h-5 w-5 text-primary" />
                 <span className="font-semibold">Saarthi</span>
             </div>
-             <nav className="flex flex-wrap justify-center gap-x-4 gap-y-2">
+             <nav className="flex flex-wrap justify-center gap-x-4 gap-y-2 text-center">
                 <Link href="/admin/login" className="text-sm hover:underline" prefetch={false}>Admin Login</Link>
                 <Link href="/iqac/login" className="text-sm hover:underline" prefetch={false}>IQAC Login</Link>
                 <Link href="/privacy-policy" className="text-sm hover:underline" prefetch={false}>Privacy Policy</Link>
