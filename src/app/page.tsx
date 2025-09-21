@@ -4,6 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { HeartPulse, Bot, Users, BookOpen, ShieldCheck, Search, MessageSquare, PieChart } from "lucide-react";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
   return (
@@ -13,7 +14,7 @@ export default function Home() {
           <HeartPulse className="h-6 w-6 text-primary" />
           <span className="ml-2 text-xl font-bold tracking-tighter">Saarthi</span>
         </Link>
-        <nav className="ml-auto hidden lg:flex gap-4 sm:gap-6">
+        <nav className="ml-auto hidden lg:flex gap-4 sm:gap-6 items-center">
             <Link href="#features" className="text-sm font-medium hover:underline underline-offset-4" prefetch={false}>
                 Features
             </Link>
@@ -23,11 +24,13 @@ export default function Home() {
              <Button asChild size="sm" variant="outline">
                 <Link href="/login">Sign In</Link>
              </Button>
+             <ThemeToggle />
         </nav>
-        <div className="lg:hidden ml-auto">
+        <div className="lg:hidden ml-auto flex items-center gap-2">
              <Button asChild size="sm">
                 <Link href="/login">Get Started</Link>
              </Button>
+             <ThemeToggle />
         </div>
       </header>
       <main className="flex-1">
@@ -49,7 +52,7 @@ export default function Home() {
                     <Link href="/login">Sign in with College ID</Link>
                   </Button>
                   <Button asChild size="lg" variant="secondary" className="shadow-lg hover:shadow-xl transition-shadow">
-                    <Link href="/assessment">Continue Anonymously</Link>
+                    <Link href="/anonymous">Continue Anonymously</Link>
                   </Button>
                 </div>
               </div>
@@ -144,15 +147,15 @@ export default function Home() {
         </section>
       </main>
       <footer className="bg-background border-t">
-        <div className="container mx-auto py-6 px-4 md:px-6 flex flex-col md:flex-row items-center justify-between">
+         <div className="container mx-auto py-6 px-4 md:px-6 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-2">
                 <HeartPulse className="h-5 w-5 text-primary" />
                 <span className="font-semibold">Saarthi</span>
             </div>
-            <p className="text-sm text-muted-foreground mt-4 md:mt-0">© SIH Team Saarthi. All rights reserved.</p>
-            <nav className="flex gap-4 mt-4 md:mt-0">
-                <Link href="#" className="text-sm hover:underline" prefetch={false}>Privacy Policy</Link>
-                <Link href="#" className="text-sm hover:underline" prefetch={false}>Terms of Service</Link>
+            <p className="text-sm text-muted-foreground text-center md:text-left">© SIH Team Saarthi. All rights reserved.</p>
+            <nav className="flex gap-4 flex-wrap justify-center">
+                <Link href="/privacy-policy" className="text-sm hover:underline" prefetch={false}>Privacy Policy</Link>
+                <Link href="/terms-of-service" className="text-sm hover:underline" prefetch={false}>Terms of Service</Link>
                 <Link href="/admin/login" className="text-sm hover:underline" prefetch={false}>Admin Login</Link>
                 <Link href="/iqac/login" className="text-sm hover:underline" prefetch={false}>IQAC Login</Link>
             </nav>
