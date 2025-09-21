@@ -8,6 +8,15 @@ import { Input } from '@/components/ui/input';
 import { Send, User, Bot, Zap } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { CardDescription, CardTitle } from './ui/card';
+import { HeartPulse } from 'lucide-react';
 
 interface Message {
   text: string;
@@ -27,7 +36,7 @@ export default function Chatbot() {
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const [language, setLanguage] = useState('english');
   const viewportRef = useRef<HTMLDivElement>(null);
 
   const sendMessage = async (messageText: string) => {
@@ -39,9 +48,8 @@ export default function Chatbot() {
     setIsLoading(true);
 
     try {
-      // Create a concise history for the AI model
       const history = [...messages, userMessage].slice(-10).map(m => `${m.sender}: ${m.text}`).join('\n');
-      const result = await chatbotSupport({ message: history });
+      const result = await chatbotSupport({ message: history, language });
       const botMessage: Message = { text: result.response, sender: 'bot' };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
@@ -72,7 +80,30 @@ export default function Chatbot() {
 
   return (
     <div className="flex flex-col h-full bg-background">
-        <ScrollArea className="flex-1 p-4" ref={scrollAreaRef} viewportRef={viewportRef}>
+      <div className="p-4 border-b flex items-center justify-between">
+        <div className="flex items-center gap-3">
+            <HeartPulse className="w-6 h-6 text-primary" />
+            <div>
+                <CardTitle className="text-xl font-bold">Saarthi Chat</CardTitle>
+                <CardDescription className="text-sm">Your friendly mental health companion.</CardDescription>
+            </div>
+        </div>
+        <div className="w-36">
+            <Select onValueChange={setLanguage} defaultValue={language}>
+                <SelectTrigger>
+                    <SelectValue placeholder="Language" />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectItem value="english">English</SelectItem>
+                    <SelectItem value="hindi">Hindi</SelectItem>
+                    <SelectItem value="hinglish">Hinglish</SelectItem>
+                    <SelectItem value="dogri">Dogri</SelectItem>
+                    <SelectItem value="kashmiri">Kashmiri</SelectItem>
+                </SelectContent>
+            </Select>
+        </div>
+      </div>
+        <ScrollArea className="flex-1 p-4" viewportRef={viewportRef}>
           <div className="space-y-4">
             {messages.map((message, index) => (
               <div

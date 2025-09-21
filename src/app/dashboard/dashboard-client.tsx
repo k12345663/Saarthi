@@ -9,10 +9,41 @@ import { useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
+import { RescheduleDialog } from '@/components/reschedule-dialog';
 
 const mentalHealthScore = 72;
 
+const upcomingAppointments = [
+    {
+      id: "appt1",
+      counsellor: "Dr. Anjali Sharma",
+      datetime: "Tomorrow at 2:00 PM",
+      status: "upcoming"
+    },
+    {
+      id: "appt2",
+      counsellor: "Mr. Rohan Gupta",
+      datetime: "Next week, Tuesday at 11:00 AM",
+      status: "upcoming"
+    },
+     {
+      id: "appt3",
+      counsellor: "Dr. Anjali Sharma",
+      datetime: "Completed on May 15, 2024",
+      status: "completed"
+    }
+]
+
+
 function SignedInDashboard() {
+  const [showRescheduleDialog, setShowRescheduleDialog] = useState(false);
+  const [selectedAppointment, setSelectedAppointment] = useState<(typeof upcomingAppointments)[0] | null>(null);
+
+  const handleRescheduleClick = (appointment: (typeof upcomingAppointments)[0]) => {
+    setSelectedAppointment(appointment);
+    setShowRescheduleDialog(true);
+  }
+
   return (
     <>
       <div className="lg:col-span-2 space-y-6">
@@ -124,36 +155,28 @@ function SignedInDashboard() {
             </CardDescription>
           </CardHeader>
           <CardContent className='space-y-4'>
-            <div className='flex items-start justify-between gap-4 p-3 rounded-lg bg-accent/50'>
-              <div className='flex items-center gap-4'>
-                <User className='w-5 h-5 text-primary mt-1' />
-                <div>
-                  <p className='font-semibold'>Dr. Anjali Sharma</p>
-                  <p className='text-sm text-muted-foreground'>Tomorrow at 2:00 PM</p>
+            {upcomingAppointments.map((appt) => (
+                <div key={appt.id} className={cn('flex items-start justify-between gap-4 p-3 rounded-lg bg-accent/50', appt.status === 'completed' && 'opacity-70')}>
+                    <div className='flex items-center gap-4'>
+                        {appt.status === 'completed' ? <History className='w-5 h-5 text-muted-foreground mt-1' /> : <User className='w-5 h-5 text-primary mt-1' />}
+                        <div>
+                        <p className='font-semibold'>{appt.counsellor}</p>
+                        <p className='text-sm text-muted-foreground'>{appt.datetime}</p>
+                        </div>
+                    </div>
+                     {appt.status === 'upcoming' && <Button variant="ghost" size="sm" onClick={() => handleRescheduleClick(appt)}>Reschedule</Button>}
                 </div>
-              </div>
-              <Button variant="ghost" size="sm">Reschedule</Button>
-            </div>
-            <div className='flex items-start justify-between gap-4 p-3 rounded-lg bg-accent/50'>
-              <div className='flex items-center gap-4'>
-                <User className='w-5 h-5 text-primary mt-1' />
-                <div>
-                  <p className='font-semibold'>Mr. Rohan Gupta</p>
-                  <p className='text-sm text-muted-foreground'>Next week, Tuesday at 11:00 AM</p>
-                </div>
-              </div>
-              <Button variant="ghost" size="sm">Reschedule</Button>
-            </div>
-             <div className='flex items-center gap-4 p-3 rounded-lg bg-accent/50 opacity-70'>
-                <History className='w-5 h-5 text-muted-foreground'/>
-                <div>
-                <p className='font-semibold'>Dr. Anjali Sharma</p>
-                <p className='text-sm text-muted-foreground'>Completed on May 15, 2024</p>
-                </div>
-            </div>
+            ))}
           </CardContent>
         </Card>
       </div>
+      {selectedAppointment && (
+        <RescheduleDialog 
+            isOpen={showRescheduleDialog} 
+            onClose={() => setShowRescheduleDialog(false)}
+            appointment={selectedAppointment}
+        />
+      )}
     </>
   );
 }
