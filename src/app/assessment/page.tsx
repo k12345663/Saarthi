@@ -34,23 +34,18 @@ const options = [
 function Assessment() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isSignedIn, setIsSignedIn] = useState(false);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [score, setScore] = useState<number | null>(null);
-  const [isAnonymous, setIsAnonymous] = useState(true);
 
-  useEffect(() => {
-    const signedInParam = searchParams.get('signedin');
-    setIsSignedIn(signedInParam === 'true');
-    setIsAnonymous(signedInParam !== 'true');
-  }, [searchParams]);
+  const isAnonymous = searchParams.get('anonymous') === 'true';
+  const continuityCode = searchParams.get('code') || '';
+  const navQuery = isAnonymous ? `?anonymous=true&code=${continuityCode}` : '';
 
   const handleValueChange = (questionId: string, value: string) => {
     const newAnswers = { ...answers, [questionId]: value };
     setAnswers(newAnswers);
 
-    // Auto-advance to the next question, but don't auto-submit at the end.
     setTimeout(() => {
         if (currentQuestionIndex < questions.length - 1) {
             setCurrentQuestionIndex(currentQuestionIndex + 1);
@@ -75,7 +70,7 @@ function Assessment() {
   };
 
   const handleContinue = () => {
-    const destination = isSignedIn ? '/dashboard' : `/dashboard?anonymous=true`;
+    const destination = `/dashboard${navQuery}`;
     router.push(destination);
   }
 
@@ -86,7 +81,7 @@ function Assessment() {
 
   if (score !== null) {
     const { level, advice, coping } = getDepressionSeverity(score);
-    const ctaText = isSignedIn ? "Open Your Dashboard" : "Continue Anonymously";
+    const ctaText = !isAnonymous ? "Open Your Dashboard" : "Continue Anonymously";
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-background p-4">

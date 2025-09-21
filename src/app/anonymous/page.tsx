@@ -21,6 +21,7 @@ import {
 import { useToast } from '@/hooks/use-toast';
 
 function generateContinuityCode() {
+    // A simple 6-character alphanumeric code generator
     const chars = 'ABCDEFGHIJKLMNPQRSTUVWXYZ123456789';
     let result = '';
     for (let i = 0; i < 6; i++) {

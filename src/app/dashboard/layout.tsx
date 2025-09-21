@@ -14,7 +14,7 @@ import Link from 'next/link';
 import { HeartPulse, MessageSquare, CalendarPlus, LogOut, Settings, UserCircle, BotMessageSquare, BookOpen, LayoutDashboard, Copy, Check } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState, Suspense } from 'react';
+import { Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
 import { ThemeToggle } from '@/components/theme-toggle';
 import {
@@ -27,6 +27,7 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from '@/components/ui/button';
+import { useState } from 'react';
 
 function DashboardLayoutSkeleton() {
     return (
@@ -88,26 +89,20 @@ function DashboardLayoutContent({
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isAnonymous, setIsAnonymous] = useState(false);
-  const [continuityCode, setContinuityCode] = useState('');
   const [showExitDialog, setShowExitDialog] = useState(false);
   const [copied, setCopied] = useState(false);
 
-  useEffect(() => {
-    const anonymous = searchParams.get('anonymous') === 'true';
-    const code = searchParams.get('code') || '';
-    setIsAnonymous(anonymous);
-    setContinuityCode(code);
-  }, [searchParams]);
+  const isAnonymous = searchParams.get('anonymous') === 'true';
+  const continuityCode = searchParams.get('code') || '';
   
   const navQuery = isAnonymous ? `?anonymous=true&code=${continuityCode}` : '';
 
   const signedInMenuItems = [
-    { href: `/dashboard${navQuery}`, label: 'Dashboard', icon: LayoutDashboard },
-    { href: `/chatbot${navQuery}`, label: 'Chatbot', icon: BotMessageSquare },
-    { href: `/book-appointment${navQuery}`, label: 'Book Appointment', icon: CalendarPlus },
-    { href: `/community${navQuery}`, label: 'Community', icon: MessageSquare },
-    { href: `/cultural-content${navQuery}`, label: 'Cultural Content', icon: BookOpen },
+    { href: `/dashboard`, label: 'Dashboard', icon: LayoutDashboard },
+    { href: `/chatbot`, label: 'Chatbot', icon: BotMessageSquare },
+    { href: `/book-appointment`, label: 'Book Appointment', icon: CalendarPlus },
+    { href: `/community`, label: 'Community', icon: MessageSquare },
+    { href: `/cultural-content`, label: 'Cultural Content', icon: BookOpen },
   ];
   
   const anonymousMenuItems = [
@@ -147,7 +142,7 @@ function DashboardLayoutContent({
                 <SidebarMenu>
                     {menuItems.map((item) => (
                         <SidebarMenuItem key={item.href}>
-                            <Link href={item.href} passHref>
+                            <Link href={`${item.href}${item.href.includes('?') ? '' : navQuery}`} passHref>
                                 <SidebarMenuButton isActive={pathname === item.href.split('?')[0]}>
                                     <item.icon />
                                     <span>{item.label}</span>
@@ -259,5 +254,3 @@ export default function DashboardLayout({
     </Suspense>
   );
 }
-
-    

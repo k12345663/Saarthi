@@ -10,6 +10,7 @@ import { useEffect, useState, Suspense } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Skeleton } from '@/components/ui/skeleton';
 import { RescheduleDialog } from '@/components/reschedule-dialog';
+import { cn } from '@/lib/utils';
 
 const mentalHealthScore = 72;
 
@@ -32,7 +33,7 @@ const upcomingAppointments = [
       datetime: "Completed on May 15, 2024",
       status: "completed"
     }
-]
+];
 
 
 function SignedInDashboard() {
@@ -110,7 +111,7 @@ function SignedInDashboard() {
           </CardContent>
           <CardFooter>
             <Button variant="outline" className="w-full" asChild>
-              <Link href="/assessment?signedin=true">Take New Test</Link>
+              <Link href="/assessment">Take New Test</Link>
             </Button>
           </CardFooter>
         </Card>
@@ -243,19 +244,7 @@ function AnonymousDashboard() {
 
 function DashboardClientInternal() {
   const searchParams = useSearchParams();
-  const [isAnonymous, setIsAnonymous] = useState<boolean | undefined>(undefined);
-
-  useEffect(() => {
-    setIsAnonymous(searchParams.get('anonymous') === 'true');
-  }, [searchParams]);
-
-  if (isAnonymous === undefined) {
-    return (
-      <div className="lg:col-span-3">
-        <Skeleton className="h-48 w-full" />
-      </div>
-    );
-  }
+  const isAnonymous = searchParams.get('anonymous') === 'true';
 
   const headerTitle = isAnonymous ? "Anonymous Dashboard" : "Saarthi Dashboard";
   const headerDescription = isAnonymous
@@ -284,10 +273,12 @@ function DashboardClientInternal() {
 
 export default function DashboardClient() {
   return (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={
+        <div className="lg:col-span-3 p-8">
+            <Skeleton className="h-48 w-full" />
+        </div>
+    }>
       <DashboardClientInternal />
     </Suspense>
   )
 }
-
-    
