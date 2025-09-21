@@ -81,7 +81,7 @@ function Assessment() {
 
   if (score !== null) {
     const { level, advice, coping } = getDepressionSeverity(score);
-    const ctaText = !isAnonymous ? "Open Your Dashboard" : "Continue Anonymously";
+    const ctaText = "Open Your Dashboard";
 
     return (
         <div className="flex items-center justify-center min-h-screen bg-background p-4">

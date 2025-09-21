@@ -48,7 +48,7 @@ export default function AnonymousPage() {
   const handleContinueWithCode = () => {
     // In a real app, you would validate the code here
     if (continuityCode) {
-        router.push(`/dashboard?anonymous=true&code=${continuityCode}`);
+        router.push(`/assessment?anonymous=true&code=${continuityCode}`);
     } else {
         toast({
             title: "Error",
@@ -59,7 +59,7 @@ export default function AnonymousPage() {
   }
 
   const handleDialogContinue = () => {
-    router.push(`/dashboard?anonymous=true&code=${newCode}`);
+    router.push(`/assessment?anonymous=true&code=${newCode}`);
   }
 
   const copyToClipboard = () => {
@@ -127,7 +127,7 @@ export default function AnonymousPage() {
             </div>
           </div>
           <AlertDialogFooter>
-            <AlertDialogAction onClick={handleDialogContinue} className="w-full">Continue to Dashboard</AlertDialogAction>
+            <AlertDialogAction onClick={handleDialogContinue} className="w-full">Continue to Assessment</AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
