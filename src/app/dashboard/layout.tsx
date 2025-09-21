@@ -16,6 +16,9 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState, Suspense } from 'react';
 import { Skeleton } from '@/components/ui/skeleton';
+import { ThemeProvider } from '@/components/theme-provider';
+import { ThemeToggle } from '@/components/theme-toggle';
+
 
 function DashboardLayoutSkeleton() {
     return (
@@ -78,36 +81,55 @@ function DashboardLayoutContent({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const continuityCode = searchParams.get('code');
 
   useEffect(() => {
     setIsAnonymous(searchParams.get('anonymous') === 'true');
   }, [searchParams]);
   
-  const navQuery = isAnonymous ? '?anonymous=true' : '';
+  const navQuery = isAnonymous ? `?anonymous=true&code=${continuityCode}` : '';
 
   const signedInMenuItems = [
-    { href: `/dashboard${navQuery}`, label: 'Dashboard', icon: LayoutDashboard },
-    { href: `/chatbot${navQuery}`, label: 'Chatbot', icon: BotMessageSquare },
-    { href: `/book-appointment${navQuery}`, label: 'Book Appointment', icon: CalendarPlus },
-    { href: `/community${navQuery}`, label: 'Community', icon: MessageSquare },
-    { href: `/cultural-content${navQuery}`, label: 'Cultural Content', icon: BookOpen },
+    { href: `/dashboard`, label: 'Dashboard', icon: LayoutDashboard },
+    { href: `/chatbot`, label: 'Chatbot', icon: BotMessageSquare },
+    { href: `/book-appointment`, label: 'Book Appointment', icon: CalendarPlus },
+    { href: `/community`, label: 'Community', icon: MessageSquare },
+    { href: `/cultural-content`, label: 'Cultural Content', icon: BookOpen },
   ];
   
   const anonymousMenuItems = [
+      { href: `/dashboard${navQuery}`, label: 'Dashboard', icon: LayoutDashboard },
       { href: `/chatbot${navQuery}`, label: 'Chatbot', icon: BotMessageSquare },
       { href: `/book-appointment${navQuery}`, label: 'Book Appointment', icon: CalendarPlus },
   ];
 
   const menuItems = isAnonymous ? anonymousMenuItems : signedInMenuItems;
 
+  const handleExit = () => {
+    if (isAnonymous) {
+      router.push(`/anonymous-exit?code=${continuityCode}`);
+    } else {
+      router.push('/');
+    }
+  };
+
   return (
+    <ThemeProvider
+        attribute="class"
+        defaultTheme="system"
+        enableSystem
+        disableTransitionOnChange
+    >
     <SidebarProvider>
       <div className="flex min-h-screen bg-background">
         <Sidebar>
             <SidebarHeader>
-                <div className="flex items-center gap-2 p-2">
-                    <HeartPulse className="w-6 h-6 text-primary" />
-                    <span className="text-xl font-semibold">Saarthi</span>
+                <div className="flex items-center justify-between p-2">
+                    <div className="flex items-center gap-2">
+                        <HeartPulse className="w-6 h-6 text-primary" />
+                        <span className="text-xl font-semibold">Saarthi</span>
+                    </div>
+                    <ThemeToggle />
                 </div>
             </SidebarHeader>
             <SidebarContent>
@@ -135,7 +157,7 @@ function DashboardLayoutContent({
                             </SidebarMenuButton>
                         </SidebarMenuItem>
                         <SidebarMenuItem>
-                            <SidebarMenuButton onClick={() => router.push('/')}>
+                            <SidebarMenuButton onClick={handleExit}>
                                 <LogOut />
                                 <span>Logout</span>
                             </SidebarMenuButton>
@@ -159,7 +181,7 @@ function DashboardLayoutContent({
                     <>
                     <SidebarMenu>
                         <SidebarMenuItem>
-                            <SidebarMenuButton onClick={() => router.push('/')}>
+                            <SidebarMenuButton onClick={handleExit}>
                                 <LogOut />
                                 <span>Exit</span>
                             </SidebarMenuButton>
@@ -167,12 +189,13 @@ function DashboardLayoutContent({
                     </SidebarMenu>
                     <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50 m-2">
                         <Avatar>
-                            <AvatarFallback>
-                                <UserCircle/>
+                             <AvatarFallback>
+                                A
                             </AvatarFallback>
                         </Avatar>
                         <div className="flex flex-col">
                             <span className="font-semibold text-sm">Anonymous</span>
+                             <span className="text-xs text-muted-foreground">ID: {continuityCode?.substring(0, 8)}...</span>
                         </div>
                     </div>
                     </>
@@ -184,6 +207,7 @@ function DashboardLayoutContent({
         </main>
       </div>
     </SidebarProvider>
+    </ThemeProvider>
   )
 }
 

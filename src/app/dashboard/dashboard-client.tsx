@@ -8,29 +8,92 @@ import Link from 'next/link';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { Progress } from '@/components/ui/progress';
+import { RescheduleDialog } from '@/components/reschedule-dialog';
 
 const mentalHealthScore = 72;
+
+const upcomingAppointments = [
+    {
+        counsellor: 'Dr. Anjali Sharma',
+        date: 'Tomorrow at 2:00 PM',
+    },
+    {
+        counsellor: 'Mr. Rohan Gupta',
+        date: 'Next week, Tuesday at 11:00 AM',
+    }
+]
 
 export default function DashboardClient() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isAnonymous, setIsAnonymous] = useState(false);
+  const continuityCode = searchParams.get('code');
 
   useEffect(() => {
     const anonymous = searchParams.get('anonymous') === 'true';
     setIsAnonymous(anonymous);
-    if (anonymous) {
-      router.replace('/chatbot?anonymous=true');
-    }
-  }, [searchParams, router]);
+  }, [searchParams]);
+
+  const handleEndSession = () => {
+    // In a real app, you might want to clear some local storage here.
+    router.push(`/anonymous-exit?code=${continuityCode}`);
+  }
 
   if (isAnonymous) {
-    // This will be shown briefly before the redirect
-    return (
-        <div className="flex items-center justify-center min-h-screen bg-background">
-            <p>Loading your session...</p>
-        </div>
-    );
+      return (
+         <div className="flex flex-col bg-background min-h-screen">
+             <header className="p-4 md:p-6 lg:p-8 bg-card border-b">
+                <div className="flex items-center gap-3">
+                <Heart className="w-8 h-8 text-primary" />
+                <div>
+                    <h1 className="text-2xl font-bold">Anonymous Dashboard</h1>
+                    <p className="text-muted-foreground">
+                    Your private, temporary session. Your continuity code is: <span className='font-bold text-primary'>{continuityCode}</span>
+                    </p>
+                </div>
+                </div>
+            </header>
+            <main className="flex-1 p-4 md:p-6 lg:p-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto">
+                    <Card className="hover:shadow-lg transition-shadow">
+                        <CardHeader>
+                            <div className='flex items-center gap-2'>
+                                <Bot className='w-6 h-6 text-primary' />
+                                <CardTitle>Chat with Saarthi</CardTitle>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground">Talk to our friendly AI for support, or to explore coping strategies.</p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button asChild className='w-full'>
+                            <Link href="/chatbot?anonymous=true">Start Chat</Link>
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                    <Card className="hover:shadow-lg transition-shadow">
+                        <CardHeader>
+                            <div className='flex items-center gap-2'>
+                                <CalendarPlus className='w-6 h-6 text-primary' />
+                                <CardTitle>Book a Session</CardTitle>
+                            </div>
+                        </CardHeader>
+                        <CardContent>
+                            <p className="text-muted-foreground">Schedule a confidential appointment with a professional counsellor.</p>
+                        </CardContent>
+                        <CardFooter>
+                            <Button asChild className='w-full'>
+                            <Link href="/book-appointment?anonymous=true">Book Now</Link>
+                            </Button>
+                        </CardFooter>
+                    </Card>
+                </div>
+                 <div className="mt-8 text-center">
+                    <Button variant="outline" onClick={handleEndSession}>End Session & View Code</Button>
+                </div>
+            </main>
+         </div>
+      )
   }
 
   return (
@@ -159,26 +222,18 @@ export default function DashboardClient() {
                 </CardDescription>
               </CardHeader>
               <CardContent className='space-y-4'>
-                  <div className='flex items-start justify-between gap-4 p-3 rounded-lg bg-accent/50'>
+                {upcomingAppointments.map((appt, index) => (
+                  <div key={index} className='flex items-start justify-between gap-4 p-3 rounded-lg bg-accent/50'>
                     <div className='flex items-center gap-4'>
                       <Calendar className='w-5 h-5 text-primary mt-1'/>
                       <div>
-                        <p className='font-semibold'>Dr. Anjali Sharma</p>
-                        <p className='text-sm text-muted-foreground'>Tomorrow at 2:00 PM</p>
+                        <p className='font-semibold'>{appt.counsellor}</p>
+                        <p className='text-sm text-muted-foreground'>{appt.date}</p>
                       </div>
                     </div>
-                     <Button variant="ghost" size="sm">Reschedule</Button>
+                    <RescheduleDialog appointment={appt} />
                   </div>
-                   <div className='flex items-start justify-between gap-4 p-3 rounded-lg bg-accent/50'>
-                    <div className='flex items-center gap-4'>
-                        <Calendar className='w-5 h-5 text-primary mt-1'/>
-                        <div>
-                          <p className='font-semibold'>Mr. Rohan Gupta</p>
-                          <p className='text-sm text-muted-foreground'>Next week, Tuesday at 11:00 AM</p>
-                        </div>
-                    </div>
-                    <Button variant="ghost" size="sm">Reschedule</Button>
-                  </div>
+                ))}
               </CardContent>
             </Card>
             
@@ -209,5 +264,3 @@ export default function DashboardClient() {
     </div>
   );
 }
-
-    
