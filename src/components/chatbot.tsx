@@ -6,9 +6,10 @@ import { chatbotSupport } from '@/ai/flows/supportive-chatbot';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Send, User, Bot, Sparkles } from 'lucide-react';
+import { Send, User, Bot, Sparkles, Languages } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
 interface Message {
   text: string;
@@ -22,12 +23,21 @@ const quickReplies = [
   { label: 'Find resources', command: '/resources' },
 ];
 
+const languages = [
+    { code: 'en', name: 'English' },
+    { code: 'hi', name: 'Hindi' },
+    { code: 'hinglish', name: 'Hinglish' },
+    { code: 'ks', name: 'Kashmiri' },
+    { code: 'doi', name: 'Dogri' },
+];
+
 export default function Chatbot() {
   const [messages, setMessages] = useState<Message[]>([
     { sender: 'bot', text: "Hello! I am Saarthi, your friendly mental health companion. How are you feeling today?" }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [language, setLanguage] = useState('English');
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const sendMessage = async (messageText: string) => {
@@ -41,7 +51,7 @@ export default function Chatbot() {
 
     try {
       const history = newMessages.slice(-10).map(m => `${m.sender}: ${m.text}`).join('\n');
-      const result = await chatbotSupport({ message: history });
+      const result = await chatbotSupport({ message: history, language });
       const botMessage: Message = { text: result.response, sender: 'bot' };
       setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
@@ -75,6 +85,23 @@ export default function Chatbot() {
 
   return (
     <div className="flex flex-col h-full">
+        <div className="p-2 border-b flex justify-end">
+            <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                    <Languages className="w-4 h-4 mr-2" />
+                    {language}
+                </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                {languages.map((lang) => (
+                    <DropdownMenuItem key={lang.code} onSelect={() => setLanguage(lang.name)}>
+                    {lang.name}
+                    </DropdownMenuItem>
+                ))}
+                </DropdownMenuContent>
+            </DropdownMenu>
+        </div>
       <ScrollArea className="flex-1 p-4" ref={scrollAreaRef}>
         <div className="space-y-4">
           {messages.map((message, index) => (

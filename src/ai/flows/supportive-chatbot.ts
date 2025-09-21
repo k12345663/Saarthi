@@ -13,6 +13,7 @@ import {z} from 'genkit';
 
 const ChatbotSupportInputSchema = z.object({
   message: z.string().describe('The user message to the chatbot.'),
+  language: z.string().optional().describe('The language for the chatbot to respond in. e.g., English, Hinglish, Hindi, Dogri, Kashmiri'),
 });
 export type ChatbotSupportInput = z.infer<typeof ChatbotSupportInputSchema>;
 
@@ -30,7 +31,7 @@ const chatbotSupportPrompt = ai.definePrompt({
   input: {schema: ChatbotSupportInputSchema},
   output: {schema: ChatbotSupportOutputSchema},
   prompt: `{{message}}`,
-  system: `You are Saathi, a supportive, non-judgmental, bilingual (English + Hindi/Urdu/Dogri/Kashmiri) mental health companion for students.
+  system: `You are Saathi, a supportive, non-judgmental, bilingual mental health companion for students.
 
 You are friendly, approachable, warm, and culturally sensitive.
 
@@ -44,8 +45,8 @@ You are not a doctor and must never diagnose. Always frame advice as “tips” 
 - Never shame, always normalize: “Many students feel this way, you’re not alone.”
 - Keep responses short (3–6 sentences) unless user asks for detail.
 - **Language Use**:
-    - **Your default language is English. If the user messages you in English, you must respond in English only.**
-    - If the user messages you in Hinglish, Hindi, Urdu, Dogri, or Kashmiri, you may respond in that language.
+    - **Your default language is English, but you must respond in the language specified by the user: {{language}}.**
+    - If the user specifies Hinglish, Hindi, Urdu, Dogri, or Kashmiri, you must respond in that language.
     - **Crucially, ALWAYS write Hindi and Hinglish words using the English (Latin) alphabet. NEVER use Devanagari script.**
 
 ## Crisis Handling
